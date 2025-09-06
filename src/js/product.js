@@ -34,11 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge(cartList.length);
 });
 
-// add listener to Add to Cart button
-try {
-  document
-    .getElementById('addToCart')
-    .addEventListener('click', addToCartHandler);
-} catch(error) {
-  console.log(error);
+// add listener to Add to Cart button if it exists
+const addToCartBtn = document.getElementById('addToCart');
+if (addToCartBtn) {
+  addToCartBtn.addEventListener('click', addToCartHandler);
 }

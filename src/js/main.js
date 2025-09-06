@@ -1,3 +1,5 @@
+import updateCartBadge from './product.js'
+
 async function loadProducts() {
     try {
         const response = await fetch("tents.json");
@@ -25,4 +27,6 @@ function productCardTemplate(product) {
     </li>`;
 }
 
+const cart = getLocalStorage('so-cart') || [];
+updateCartBadge(cart.length);
 loadProducts();
