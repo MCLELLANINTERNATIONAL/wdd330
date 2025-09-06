@@ -94,6 +94,24 @@ p {
   margin-top: -1.7em;
 }
 
+#cart-badge {
+  display: none;
+  position: absolute;
+  top: 10%;
+  right: -30%;
+  background: #e53935;
+  color: #fff;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
 /* utility classes */
 .highlight {
   color: var(--tertiary-color);
