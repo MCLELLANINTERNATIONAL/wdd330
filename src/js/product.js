@@ -10,7 +10,7 @@ function addProductToCart(product) {
   updateCartBadge(cart.length);
 }
 
-function updateCartBadge(count) {
+export function updateCartBadge(count) {
   const badge = document.getElementById('cart-badge');
   badge.style.display = (count > 0) ? 'flex' : 'none';
   badge.textContent = count;

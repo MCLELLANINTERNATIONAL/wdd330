@@ -1,4 +1,5 @@
-import updateCartBadge from './product.js'
+import { updateCartBadge } from './product.js'
+import { getLocalStorage } from './utils.mjs';
 
 async function loadProducts() {
     try {
@@ -6,7 +7,7 @@ async function loadProducts() {
         const products = await response.json();
 
         const shownProducts = products.filter((product) => product.Show === true);
-        const productList = document.quarrySelector(".product-list");
+        const productList = document.querySelector(".product-list");
         productList.innerHTML = shownProducts.map(productCardTemplate).join("");
     } catch (error) {
         console.error("Error loading products:", error);
