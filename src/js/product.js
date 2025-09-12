@@ -17,9 +17,9 @@ export function updateCartBadge(count) {
   badge.textContent = count;
 }
 
-// adding listener to when the page is reloaded, to display the correct cart badge information.
-document.addEventListener('DOMContentLoaded', () => {
-  const cartList = getLocalStorage('so-cart') || [];
-  console.log('Main page cartList:', cartList);
-  updateCartBadge(cartList.length);
-});
+// // adding listener to when the page is reloaded, to display the correct cart badge information.
+// document.addEventListener('DOMContentLoaded', () => {
+//   const cartList = getLocalStorage('so-cart') || [];
+//   console.log('Main page cartList:', cartList);
+//   updateCartBadge(cartList.length);
+// });
