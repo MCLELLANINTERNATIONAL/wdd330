@@ -1,4 +1,5 @@
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { updateCartBadge } from "./product";
 
 export default class ProductDetails {
     constructor(productId, dataSource){
