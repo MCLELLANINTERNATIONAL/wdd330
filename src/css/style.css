@@ -192,6 +192,7 @@ button {
 }
 
 .products h2 {
+  text-align: center;
   margin-bottom: 1em;
 }
 
@@ -222,6 +223,56 @@ button {
 .product-card h3,
 .product-card p {
   margin: 0.5em 0;
+}
+
+/* Shop by Category list: no bullets, no default padding */
+.category-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  /* row layout */
+  display: flex;
+  gap: 1rem;
+  justify-content: center;   /* or space-between */
+  align-items: stretch;
+  flex-wrap: wrap;           /* allows wrapping on small screens */
+}
+
+/* keep list items clean */
+.category-grid > li {
+  margin: 0;
+  padding: 0;
+}
+
+/* each tile */
+.category-card {
+  display: flex;
+  flex-direction: column;    /* image above label */
+  align-items: center;
+  text-decoration: none;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+.categories h2 {
+  text-align: center;
+  color: #000;
+  font-weight: 700;
+}
+
+/* image sizing (adjust if needed) */
+.category-card img {
+  width: 128px;   /* or 256px if you prefer */
+  height: 128px;
+  object-fit: contain;
+}
+
+.category-card span {
+  color: #000;
+  font-weight: 700;         /* label under the icon */
 }
 
 .card__brand {
@@ -374,6 +425,10 @@ button {
   .cart-card {
     font-size: inherit;
     grid-template-columns: 150px auto 15%;
+  }
+
+  .category-grid {
+    flex-wrap: nowrap;
   }
 }
 
