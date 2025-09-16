@@ -4,47 +4,34 @@ import { updateCartBadge } from './product.js';
 
 loadHeaderFooter();
 
-const datasource = getLocalStorage('so-cart');
 const element = document.querySelector('.product-list');
-const shopCart = new ShoppingCart(datasource, element);
+const shopCart = new ShoppingCart(getLocalStorage('so-cart') || [], element);
 shopCart.init();
 
-/*function renderCartContents() {
+function renderCartContents() {
   const cartItems = getLocalStorage('so-cart');
-  if (!Array.isArray(cartItems) || cartItems.length === 0) {
-    document.querySelector('.product-list').innerHTML =
-      '<p>Your cart is empty.</p>';
-    updateCartFooter([]); // ensure footer stays hidden
-    updateCartBadge(); // keeps badge hidden/0 when empty
-    return;
-  }
-
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector('.product-list').innerHTML = htmlItems.join('');
-  // Update/show total
-  updateCartFooter(cartItems);
-  updateCartBadge();
 }
 
 function cartItemTemplate(item) {
-  const FinalPrice = Number(item.FinalPrice); // Simple number conversion
-  const discountPrice = FinalPrice * 0.1; // 10% of FinalPrice
-  const newItem = `<li class='cart-card divider'>
-  <a href='#' class='cart-card__image'>
+  const newItem = `<li class="cart-card divider">
+  <a href="#" class="cart-card__image">
     <img
-      src='${item.Image}'
-      alt='${item.Name}'
+      src="${item.Image}"
+      alt="${item.Name}"
     />
   </a>
-  <a href='#'>
-    <h2 class='card__name'>${item.Name}</h2>
+  <a href="#">
+    <h2 class="card__name">${item.Name}</h2>
   </a>
-  <p class='cart-card__color'>${item.Colors?.[0]?.ColorName ?? ''}</p>
-  <p class='cart-card__quantity'>qty: 1</p>
-<p class='cart-card__price'>$${FinalPrice.toFixed(2)}<br>Discount 10%: $${discountPrice.toFixed(2)}</p></li>`;
+  <p class="cart-card__color">${item.Colors[0].ColorName}</p>
+  <p class="cart-card__quantity">qty: 1</p>
+  <p class="cart-card__price">$${item.FinalPrice}</p>
+</li>`;
 
   return newItem;
-}*/
+}
 
 function updateCartFooter(cart) {
   const footerEl = document.getElementById('cart-footer');
@@ -101,10 +88,8 @@ function formatCurrency(amount) {
   }
 }
 
-updateCartFooter(datasource);
-
 document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge(); // ensure correct on initial load
+  renderCartContents(); // ← add
+  updateCartFooter(getLocalStorage('so-cart') || []); // ← add
 });
-
-loadHeaderFooter();

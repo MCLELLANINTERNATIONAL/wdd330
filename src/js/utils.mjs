@@ -1,5 +1,3 @@
-import { updateCartBadge } from "./product.js";
-// wrapper for querySelector...returns matching element
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
@@ -8,29 +6,22 @@ export function qs(selector, parent = document) {
 
 // retrieve data from localstorage
 export function getLocalStorage(key) {
-  try { const data = JSON.parse(localStorage.getItem(key));
-    // Always return an array for the cart key
-    return key === 'so-cart' ? (Array.isArray(data) ? data : []) : data;
-  } catch {
-    return key === 'so-cart' ? [] : null;
-  }
+  return JSON.parse(localStorage.getItem(key));
 }
- 
+
 // save data to local storage
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 // set a listener for both touchend and click
 export function setClick(selector, callback) {
-  const el = qs(selector);
-  if (!el) return;
-  el.addEventListener('touchend', (event) => {
-    event.preventDefault();
-    callback();
-  });
-  el.addEventListener('click', callback);
+  qs(selector).addEventListener('touchend', (event) => {event.preventDefault();
+  callback();
+  });  
+  qs(selector).addEventListener('click', callback);
 }
 
+//get product id from the query string
 export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -39,33 +30,23 @@ export function getParam(param) {
 }
 
 export function renderListWithTemplate(
-  templateFn,
-  parentElement,
-  list,
-  position = 'afterbegin',
-  clear = false
-) {
-  // allow selector string or element
-  const parent =
-    typeof parentElement === 'string'
-      ? document.querySelector(parentElement)
-      : parentElement;
+  template, parentElement, list, position = 'afterbegin', clear = false) {
+  const htmlStrings = list.map(template);
 
-  if (!parent) return;
-  if (clear) parent.innerHTML = '';
+  if (clear) {
+    parentElement.innerHTML = '';
+  }
+  parentElement.insertAdjacentHTML(position, htmlStrings.join(''));
+}
   if (!Array.isArray(list) || list.length === 0) {
     parent.insertAdjacentHTML(position, '<p>No products found.</p>');
     return;
   }
 
-  const htmlStrings = list.map(templateFn);
-  parent.insertAdjacentHTML(position, htmlStrings.join(''));
-}
-
-export function renderWithTemplate(templateFn, parentElement, callback) {
-  parentElement.innerHTML = templateFn;
+export function renderWithTemplate(template, parentElement, data, callback) {
+  parentElement.innerHTML = template;
   if(callback) {
-    callback();
+    callback(data);
   }
 }
 
@@ -76,11 +57,11 @@ export async function loadTemplate(path) {
 }
 
 export async function loadHeaderFooter() {
-  const headerTemplate = await loadTemplate("../partials/header.html");
-  const headerElement = document.querySelector("#main-head");
+  const headerTemplate = await loadTemplate('../partials/header.html');
+  const headerElement = document.querySelector('#main-header');
   renderWithTemplate(headerTemplate, headerElement, updateCartBadge);
 
-  const footerTemplate = await loadTemplate("../partials/footer.html");
-  const footerElement = document.querySelector("#main-foot");
+  const footerTemplate = await loadTemplate('../partials/footer.html');
+  const footerElement = document.querySelector('#main-footer');
   renderWithTemplate(footerTemplate, footerElement);
 }
