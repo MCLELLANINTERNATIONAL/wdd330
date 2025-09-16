@@ -234,9 +234,9 @@ button {
   /* row layout */
   display: flex;
   gap: 1rem;
-  justify-content: center;   /* or space-between */
+  justify-content: center; /* or space-between */
   align-items: stretch;
-  flex-wrap: wrap;           /* allows wrapping on small screens */
+  flex-wrap: wrap; /* allows wrapping on small screens */
 }
 
 /* keep list items clean */
@@ -248,13 +248,13 @@ button {
 /* each tile */
 .category-card {
   display: flex;
-  flex-direction: column;    /* image above label */
+  flex-direction: column; /* image above label */
   align-items: center;
   text-decoration: none;
   padding: 1rem;
   border-radius: 1rem;
   background: var(--card-bg, #fff);
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
 .categories h2 {
@@ -265,14 +265,14 @@ button {
 
 /* image sizing (adjust if needed) */
 .category-card img {
-  width: 128px;   /* or 256px if you prefer */
+  width: 128px; /* or 256px if you prefer */
   height: 128px;
   object-fit: contain;
 }
 
 .category-card span {
   color: #000;
-  font-weight: 700;         /* label under the icon */
+  font-weight: 700; /* label under the icon */
 }
 
 .card__brand {
