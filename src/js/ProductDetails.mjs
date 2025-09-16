@@ -46,7 +46,7 @@ function productDetailsTemplate(product) {
       const discountPrice = finalPrice * 0.10; // 10% of FinalPrice
       descEl.innerHTML = product.DescriptionHtmlSimple + '<br>10% Discount Price: $' + discountPrice.toFixed(2);
     
-      document.querySelector('#p-price').textContent = `${euroPrice}`;
+      document.querySelector('#p-price').textContent = `${dollarPrice}`;
       document.querySelector('#p-color').textContent = product.Colors[0].ColorName;
       document.querySelector('#p-description').innerHTML = product.DescriptionHtmlSimple;
     
