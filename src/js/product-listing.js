@@ -5,8 +5,10 @@ import { loadHeaderFooter, getParam } from './utils.mjs';
 loadHeaderFooter();
 
 const category = getParam('category');
-const dataSource = new ProductData();
+const dataSource = new ProductData(catergory);
 const listElement = document.querySelector('.product-list');
 const mylist = new ProductList(category, dataSource, listElement);
 
 mylist.init();
+
+loadHeaderFooter();
