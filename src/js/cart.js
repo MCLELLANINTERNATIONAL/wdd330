@@ -1,8 +1,4 @@
-import {
-  getLocalStorage,
-  setLocalStorage,
-  updateCartBadge,
-} from './utils.mjs';
+import { getLocalStorage, setLocalStorage, updateCartBadge } from './utils.mjs';
 import ShoppingCart from './ShoppingCart.mjs';
 
 let datasource = getLocalStorage('so-cart');
@@ -34,8 +30,14 @@ function showRemoveMessage(product, onChoice) {
       <button id="cancelRemove">Cancel</button>
     `;
     initialFocus = document.getElementById('confirmRemove');
-    document.getElementById('confirmRemove').onclick = () => { cleanup(); onChoice({ type: 'removeAll' }); };
-    document.getElementById('cancelRemove').onclick = () => { cleanup(); onChoice({ type: 'cancel' }); };
+    document.getElementById('confirmRemove').onclick = () => {
+      cleanup();
+      onChoice({ type: 'removeAll' });
+    };
+    document.getElementById('cancelRemove').onclick = () => {
+      cleanup();
+      onChoice({ type: 'cancel' });
+    };
   }
 
   // Case 2: exactly 2
@@ -47,9 +49,18 @@ function showRemoveMessage(product, onChoice) {
       <button id="cancelRemove">Cancel</button>
     `;
     initialFocus = document.getElementById('removeOne');
-    document.getElementById('removeOne').onclick = () => { cleanup(); onChoice({ type: 'removeOne' }); };
-    document.getElementById('removeAll').onclick = () => { cleanup(); onChoice({ type: 'removeAll' }); };
-    document.getElementById('cancelRemove').onclick = () => { cleanup(); onChoice({ type: 'cancel' }); };
+    document.getElementById('removeOne').onclick = () => {
+      cleanup();
+      onChoice({ type: 'removeOne' });
+    };
+    document.getElementById('removeAll').onclick = () => {
+      cleanup();
+      onChoice({ type: 'removeAll' });
+    };
+    document.getElementById('cancelRemove').onclick = () => {
+      cleanup();
+      onChoice({ type: 'cancel' });
+    };
   }
 
   // Case 3: more than 2
@@ -72,14 +83,20 @@ function showRemoveMessage(product, onChoice) {
       cleanup();
       onChoice({ type: 'removeSome', count: val });
     };
-    document.getElementById('removeAll').onclick = () => { cleanup(); onChoice({ type: 'removeAll' }); };
-    document.getElementById('cancelRemove').onclick = () => { cleanup(); onChoice({ type: 'cancel' }); };
+    document.getElementById('removeAll').onclick = () => {
+      cleanup();
+      onChoice({ type: 'removeAll' });
+    };
+    document.getElementById('cancelRemove').onclick = () => {
+      cleanup();
+      onChoice({ type: 'cancel' });
+    };
   }
 
   setTimeout(() => initialFocus && initialFocus.focus(), 100);
 
   // Trap focus inside dialog
-  dialog.onkeydown = function(e) {
+  dialog.onkeydown = function (e) {
     if (e.key === 'Tab') {
       e.preventDefault();
       const focusable = dialog.querySelectorAll('button,input');
@@ -94,7 +111,8 @@ function showRemoveMessage(product, onChoice) {
       }
     }
     if (e.key === 'Escape') {
-      cleanup(); onChoice({ type:'cancel' });
+      cleanup();
+      onChoice({ type: 'cancel' });
     }
   };
 
@@ -182,18 +200,18 @@ document.addEventListener('click', (e) => {
     const id = e.target.dataset.id;
     if (!id) return;
 
-    const product = datasource.find(item => item.Id === id);
+    const product = datasource.find((item) => item.Id === id);
     if (!product) return;
 
     showRemoveMessage(product, (choice) => {
       if (choice.type === 'removeOne') {
         product.quantity -= 1;
       } else if (choice.type === 'removeAll') {
-        datasource = datasource.filter(item => item.Id !== id);
+        datasource = datasource.filter((item) => item.Id !== id);
       } else if (choice.type === 'removeSome') {
         product.quantity -= choice.count;
         if (product.quantity <= 0) {
-          datasource = datasource.filter(item => item.Id !== id);
+          datasource = datasource.filter((item) => item.Id !== id);
         }
       }
 

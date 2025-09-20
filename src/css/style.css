@@ -116,7 +116,7 @@ button {
 
 .search-bar {
   width: 20vw;
-  border: solid 1px #303030 ;
+  border: solid 1px #303030;
   border-radius: 50px;
   align-items: center;
   text-align: center;
@@ -281,23 +281,25 @@ button {
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 1000;
 }
 
 .modal-dialog {
   position: fixed;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   background: #fff;
   padding: 2em;
   z-index: 1001;
   border-radius: 6px;
   min-width: 300px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
   font-size: var(--large-font);
 }
 .hide {
