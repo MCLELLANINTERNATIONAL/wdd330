@@ -87,6 +87,7 @@ export async function loadHeaderFooter() {
 export function updateCartBadge() {
   const cart = getLocalStorage('so-cart') || [];
   const badge = document.querySelector('.cart-count');
+  if (!badge) return; // Silently returns if Badge doesn't exist yet
   // Sum all quantities in the cart array:
   const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   badge.textContent = totalCount;
