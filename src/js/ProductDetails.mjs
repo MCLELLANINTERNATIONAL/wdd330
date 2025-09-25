@@ -179,9 +179,4 @@ function productDetailsTemplate(product) {
     // Ensure addToCart has id
     const addBtn = document.getElementById('addToCart');
     if (addBtn) addBtn.dataset.id = product.Id;
-
-    // document.getElementById('productPrice').textContent = product.FinalPrice; 
-    //document.getElementById('productColor').textContent = product.Colors[0].ColorName; 
-    // document.getElementById('productDesc').innerHTML = product.DescriptionHtmlSimple; 
-    //document.getElementById('addToCart').dataset.id = product.Id; 
 }
