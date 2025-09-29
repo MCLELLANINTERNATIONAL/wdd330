@@ -1,4 +1,5 @@
 import { getLocalStorage, setLocalStorage, updateCartBadge } from './utils.mjs';
+import { buildAutoCarousel } from './imageCarousel.js';
 
 export default class ProductDetails {
     constructor(productId, dataSource) {

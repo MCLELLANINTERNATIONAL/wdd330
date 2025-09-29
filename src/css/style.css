@@ -634,3 +634,49 @@ footer {
 .btn-register:hover {
   background-color: #4a7858;
 }
+
+/* Fixed frame so the page doesn't jump as images change */
+.product-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Track fills the frame */
+.pc-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Slides stack; JS toggles display */
+.pc-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Fallback: show first slide if JS hasn’t run yet */
+.product-carousel .pc-slide:first-child {
+  display: block;
+}
+
+/* Matches the same 4:3 frame in single-image mode */
+#productImage {
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  display: block;
+  background: #fff;
+}
