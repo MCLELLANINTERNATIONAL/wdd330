@@ -511,6 +511,29 @@ button {
   text-align: right;
 }
 
+/* Product Comment Style */
+#commentsSection {
+  margin-top: 20px;
+}
+#commentsList {
+  list-style-type: none;
+  padding: 0;
+}
+#commentsList li {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+#commentForm textarea {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 10px;
+}
+#commentForm button {
+  padding: 5px 10px;
+}
+
+
+
 @media screen and (min-width: 760px) {
   body {
     max-width: 1080px;

@@ -12,6 +12,8 @@ export default class ProductDetails {
         document
             .getElementById('addToCart')
             .addEventListener('click', this.addProductToCart.bind(this));
+        document.getElementById('commentForm')
+            .addEventListener('submit', this.addComment.bind(this));
         //ensure badge correct on load
         updateCartBadge();
     }
