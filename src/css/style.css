@@ -665,6 +665,10 @@ footer {
   pointer-events: none;
 }
 
+.pc-slide.is-active { 
+  display: block; 
+}
+
 /* Fallback: show first slide if JS hasn’t run yet */
 .product-carousel .pc-slide:first-child {
   display: block;
