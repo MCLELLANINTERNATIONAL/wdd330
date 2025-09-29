@@ -284,8 +284,10 @@ button {
   position: relative;
   font-weight: 600;
 }
-.alert + .alert { margin-top: 0.25rem; } /* stack nicely */
- 
+.alert + .alert {
+  margin-top: 0.25rem;
+} /* stack nicely */
+
 .alert-close {
   position: absolute;
   right: 0.75rem;
@@ -302,7 +304,9 @@ button {
   text-align: center;
 }
 
-.alert-text { display: inline-block; }
+.alert-text {
+  display: inline-block;
+}
 
 .quick-view-modal {
   position: fixed;
