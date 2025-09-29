@@ -108,6 +108,39 @@ function firstNumber(...candidates) {
     };
   }
 
+  function collectImageUrls(product) {
+    const urls = new Set();
+    const push = (u) => {
+      if (typeof u === 'string' && u.trim()) urls.add(u.trim());
+    };
+  
+    const I = product?.Images || {};
+    [I.PrimaryExtraLarge, I.PrimaryLarge, I.PrimaryMedium, I.PrimarySmall, I.SecondaryExtraLarge, I.SecondaryLarge].forEach(push);
+  
+    if (Array.isArray(I.AlternateImages)) {
+      I.AlternateImages.forEach(ai => push(typeof ai === 'string' ? ai : (ai?.Url || ai?.Image || ai?.Src)));
+    }
+  
+    if (Array.isArray(product?.Colors)) {
+      product.Colors.forEach(c => {
+        const CI = c?.Images || {};
+        [CI.PrimaryExtraLarge, CI.PrimaryLarge, CI.PrimaryMedium, CI.PrimarySmall, c?.ColorImage, c?.ImageUrl, c?.Image].forEach(push);
+        if (Array.isArray(CI.AlternateImages)) {
+          CI.AlternateImages.forEach(ai => push(typeof ai === 'string' ? ai : (ai?.Url || ai?.Image || ai?.Src)));
+        }
+      });
+    }
+  
+    // Fallback so we always have at least one
+    if (urls.size === 0 && product?.Images?.PrimaryLarge) push(product.Images.PrimaryLarge);
+  
+    // Keep order stable: primary first if present
+    const ordered = [];
+    const primaries = [I.PrimaryExtraLarge, I.PrimaryLarge, I.PrimaryMedium, I.PrimarySmall].filter(Boolean);
+    primaries.forEach(p => { if (urls.has(p)) { ordered.push(p); urls.delete(p); }});
+    return [...ordered, ...urls];
+  }
+
 function productDetailsTemplate(product) {
     document.querySelector('h2').textContent = product.Brand.Name; 
     document.querySelector('h3').textContent = product.NameWithoutBrand; 
@@ -143,12 +176,10 @@ function productDetailsTemplate(product) {
   // --- Discount flag on image ONLY ---
   const img = document.getElementById('productImage');
   if (img) {
-    // Ensure a positioned wrapper around the image
     let wrapper = img.closest('.product-media');
     if (!wrapper) {
         wrapper = document.createElement('div');
         wrapper.className = "product-media";
-        // Insert wrapper before image and move image inside it
         img.parentElement.insertBefore(wrapper, img);
         wrapper.appendChild(img);
     }
@@ -163,21 +194,36 @@ function productDetailsTemplate(product) {
     }
     flag.textContent = `${discountPct}% OFF`;
     flag.setAttribute('aria-label', `Discount ${discountPct} percent off`);
-    }
 
-    // Description
-    const descEl = document.getElementById('productDesc');
-    if (descEl) {
-        descEl.innerHTML = product.DescriptionHtmlSimple ?? '';
-    }
+    // Build the carousel if multiple images
+    const urls = collectImageUrls(product);
+    if (urls.length > 1) {
+      // Remove the single image (the carousel will render its own <img> slides)
+      img.remove();
 
-    // Color
-    const colorEl = document.getElementById('productColor');
-    if (colorEl) {
-        colorEl.textContent = product?.Colors?.[0]?.ColorName ?? '—';
+      buildAutoCarousel({
+        wrapper,
+        urls,
+        productName: product.NameWithoutBrand || product.Name || 'Product',
+        interval: 4000,
+        keepFlag: true,
+      });
+    } else {
+      // Single image: keep the plain <img>
+      if (!wrapper.contains(img)) wrapper.appendChild(img);
     }
+  }
+  // Description
+  const descEl = document.getElementById('productDesc');
+  if (descEl) 
+      descEl.innerHTML = product.DescriptionHtmlSimple ?? '';
 
-    // Ensure addToCart has id
-    const addBtn = document.getElementById('addToCart');
-    if (addBtn) addBtn.dataset.id = product.Id;
+  // Color
+  const colorEl = document.getElementById('productColor');
+  if (colorEl)
+      colorEl.textContent = product?.Colors?.[0]?.ColorName ?? '—';
+
+  // Ensure addToCart has id
+  const addBtn = document.getElementById('addToCart');
+  if (addBtn) addBtn.dataset.id = product.Id;
 }
