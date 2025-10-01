@@ -29,7 +29,7 @@ export function initAutoCarousel(carouselEl, intervalMs = 5000) {
     wrapper,
     urls,
     productName = 'Product',
-    interval = 5000,
+    interval = 4000,
     keepFlag = true,
   }) {
     const existingFlag = keepFlag ? (wrapper.querySelector('#discountFlag') || null) : null;
