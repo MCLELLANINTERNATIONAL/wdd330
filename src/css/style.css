@@ -439,6 +439,7 @@ button {
   color: #fff;
   pointer-events: none;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 3;
 }
 
 .price-compare {
@@ -509,34 +510,6 @@ button {
 .cart-final {
   font-weight: 700;
   text-align: right;
-}
-
-@media screen and (min-width: 760px) {
-  body {
-    max-width: 1080px;
-    margin: auto;
-  }
-
-  .logo {
-    max-width: 35%;
-  }
-
-  .mission {
-    font-size: 1.2em;
-  }
-
-  .cart-card {
-    font-size: inherit;
-    grid-template-columns: 150px auto 15%;
-  }
-  #desktop-search {
-    display: block;
-    margin-right: 10em;
-  }
-
-  #mobile-search {
-    display: none;
-  }
 }
 
 footer {
@@ -641,7 +614,7 @@ footer {
   width: 100%;
   max-width: 500px;
   margin-inline: auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4/3;
   overflow: hidden;
   background: #fff;
 }
@@ -670,7 +643,7 @@ footer {
 }
 
 /* Fallback: show first slide if JS hasn’t run yet */
-.product-carousel .pc-slide:first-child {
+.product-carousel:not(data-length) .pc-slide:first-child {
   display: block;
 }
 
@@ -683,4 +656,32 @@ footer {
   object-fit: contain;
   display: block;
   background: #fff;
+}
+
+@media screen and (min-width: 760px) {
+  body {
+    max-width: 1080px;
+    margin: auto;
+  }
+
+  .logo {
+    max-width: 35%;
+  }
+
+  .mission {
+    font-size: 1.2em;
+  }
+
+  .cart-card {
+    font-size: inherit;
+    grid-template-columns: 150px auto 15%;
+  }
+  #desktop-search {
+    display: block;
+    margin-right: 10em;
+  }
+
+  #mobile-search {
+    display: none;
+  }
 }
