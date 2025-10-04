@@ -1,80 +1,89 @@
-<!doctype html>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="WDD 230 - Edinburgh Entertainment by Kim Brown, Web Development, JavaScript, CSS, HTML, JSON">
-    <meta name="author" content="Kim Kathleen Brown">
-    <title>Edinburgh Entertainment - Find Local Events</title>
-    <meta property="og:title" content="Edinburgh Entertainment">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://mclellaninternational.github.io/wdds30/ee/images/edin.png">
-    <meta property="og:url" content="https://mclellaninternational.github.io/wdd330/ee">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Open+Sans:wght@400;500;700&display=swap"
-        rel="stylesheet">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="styles/normalize.css">
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/larger.css">
-    <script src="js/bookEvent.js" defer></script>
-    <script src="js/getDates.js" defer></script>
-    <script src="js/hamButton.js" defer></script>
-    <script src="js/breadcrumb.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="WDD 330 - Edinburgh Entertainment by Kim Brown, Web Development, JavaScript, CSS, HTML, JSON">
+  <meta name="author" content="Kim Kathleen Brown">
+  <title>Edinburgh Entertainment | My Cart</title>
+  <meta property="og:title" content="Edinburgh Entertainment">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://mclellaninternational.github.io/wdds30/ee/images/edin.png">
+  <meta property="og:url" content="https://mclellaninternational.github.io/wdd330/ee">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Open+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../styles/normalize.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/larger.css">
+  <script src="../js/bookEvent.js" type="module" defer></script>
+  <script src="../js/getDates.js" type="module" defer></script>
+  <script src="../js/hamButton.js" type="module" defer></script>
+  <script src="../js/breadcrumb.js" type="module" defer></script>
 </head>
 
 <body>
-  <header class="divider" id="main-head"></header>
-  <div class="search-bar" id="mobile-search">
-    <label for="item-search">Search Event Listings:</label>
-    <input id="item-search" type="text" placeholder="Search Events..." />
-    <button id="search-button">Search</button>
-  </div>
-  <div id="modalOverlay" class="modal-overlay hide"></div>
-  <div
-    id="removeDialog"
-    class="modal-dialog hide"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="RemoveFromCartMessage">
-    <div id="dialog-content">
-      <h3 id="dialogTitle"></h3>
-      <div id="dialog-message"></div>
-      <div id="dialog-options"></div>
+  <header class="has-corner-cart">
+    <img src="../images/logo.png" alt="EE" loading="lazy" width="80" height="80">
+    <h1>Edinburgh Entertainment   My Cart</h1>
+    <div class="search-bar" id="mobile-search">
+      <input id="item-search" type="text" placeholder="Search Events..." />
+      <button id="search-button">Search</button>
     </div>
+    <a href="cart.html" class="cart-btn" aria-label="Open cart">
+      <img class="cart-img" src="../images/cart.png" width="28" height="28" alt="" aria-hidden="true">
+      <span id="cart-badge" aria-live="polite" aria-atomic="true">0</span>
+    </a>
+  </header>
+
+  <div class="nav-section">
+    <button id="menu" aria-label="Toggle navigation menu"></button>
+    <nav class="header-nav">
+      <ul class="navigation">
+        <li><a href="index.html" title="index" class="active">Home</a></li>
+        <li><a href="" title="events">Events</a></li>
+        <li><a href="cart.html" title="cart">Cart</a></li>
+        <li><a href="checkout.html" title="checkout">Checkout</a></li>
+      </ul>
+    </nav>
   </div>
-  <a href="cart.html" class="cart-btn" aria-label="Open cart">
-    <img class="cart-img" src="/wdd330/ee/images/cart.svg" width="28" height="28" alt="" aria-hidden="true">
-    <span id="cart-badge" aria-live="polite" aria-atomic="true">0</span>
-  </a>
-  <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
-  <main class="divider">
-    <section class="products">
-      <h2>My Cart</h2>
 
-      <ul class="product-list" data-category="Cart"></ul>
-
-      <div class="cart-footer hide" id="cart-footer">
-        <div>
-          <p class="cart-total">
-            Subtotal: <span id="cart-total">$0.00</span>
-          </p>
-          <p class="cart-discount">
-            Discount: - <span id="cart-discount">- $0.00</span>
-          </p>
-          <p class="cart-final">
-            Final Total: <span id="cart-final">$0.00</span>
-          </p>
-          <button id="clear-cart-btn">Clear Cart</button>
-          <button id="checkout-btn">Proceed to Checkout</button>
-        </div>
+  <main>
+    <div id="modalOverlay" class="modal-overlay hide"></div>
+    <div id="removeDialog" class="modal-dialog hide" role="dialog" aria-modal="true"
+      aria-labelledby="RemoveFromCartMessage">
+      <div id="dialog-content">
+        <h3 id="dialogTitle"></h3>
+        <div id="dialog-message"></div>
+        <div id="dialog-options"></div>
       </div>
-    </section>
+    </div>
+    <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
+    <main class="divider">
+      <section class="products">
+        <ul class="product-list" data-category="Cart"></ul>
+        <div class="cart-footer hide" id="cart-footer">
+          <div>
+            <p class="cart-total">
+              Subtotal: <span id="cart-total">$0.00</span>
+            </p>
+            <p class="cart-discount">
+              Discount: - <span id="cart-discount">$0.00</span>
+            </p>
+            <p class="cart-final">
+              Final Total: <span id="cart-final">$0.00</span>
+            </p>
+            <button id="clear-cart-btn">Clear Cart</button>
+            <button id="checkout-btn">Proceed to Checkout</button>
+          </div>
+        </div>
+      </section>
+    </main>
   </main>
   <footer>
     <p>Contact Us: Phone:0123-456-7890</p>
@@ -85,8 +94,8 @@
     </nav>
 
     <p>&copy; <span id="currentyear"></span> 🏴󠁧󠁢󠁳󠁣󠁴󠁿 WDD330 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Kim Kathleen Brown 🏴󠁧󠁢󠁳󠁣󠁴󠁿
-        Edinburgh,Scotland
-        🏴󠁧󠁢󠁳󠁣󠁴󠁿</p>
+      Edinburgh,Scotland
+      🏴󠁧󠁢󠁳󠁣󠁴󠁿</p>
     <p id="lastModified"></p>
   </footer>
 </body>
