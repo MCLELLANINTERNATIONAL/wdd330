@@ -1,21 +1,4 @@
-/*:root{
-    --bg: #0f172a;        
-    --card: #111827;      
-    --muted: #9ca3af;     
-    --text: #e5e7eb;      
-    --accent: #22d3ee;        
-    --accent-ink: #0a0f1f;
-    --ring: #38bdf8;         
-    --danger: #ef4444;       
-    --ok: #10b981;           
-    --radius: 16px;
-    --shadow: 0 10px 30px rgba(0,0,0,.35);
-    --gap: 1rem;
-    --gap-lg: 1.25rem;
-    --maxw: 980px;
-  }
-  
-  /* Page & section */
+/* Page & section */
 body {
   font-family:
     system-ui,
@@ -53,6 +36,9 @@ section.purchase {
   padding: clamp(1rem, 2.5vw, 2rem);
 }
 
+h2 {
+  text-align: center;
+}
 .purchase h2 {
   font-size: clamp(1.4rem, 1.2rem + 1vw, 2rem);
   margin: 0 0 0.75rem 0;
@@ -96,7 +82,7 @@ input[type='number'],
 select {
   width: 100%;
   appearance: none;
-  background: #525b0f;
+  background: rgb(43, 88, 223);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
@@ -159,7 +145,7 @@ input[type='number']::-webkit-inner-spin-button {
 
 .submit-button {
   cursor: pointer;
-  background: #8a470c;
+  background: #D97706;;
   color: #fff;
   border: none;
   padding: 0.9rem 1.25rem;
