@@ -22,13 +22,8 @@
         flex-direction: row;
     }
 
-    #desktop-search {
-        display: block;
-        margin-right: 10em;
-    }
-
-    #mobile-search {
-        display: none;
+    search-bar {
+        margin-right: 90%;
     }
 
     #menu {
