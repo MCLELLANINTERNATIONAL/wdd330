@@ -22,6 +22,15 @@
         flex-direction: row;
     }
 
+    #desktop-search {
+        display: block;
+        margin-right: 10em;
+    }
+
+    #mobile-search {
+        display: none;
+    }
+
     #menu {
         display: none;
     }
@@ -46,36 +55,6 @@
         margin-left: 0;
     }
 
-
-    #welcome h2,
-    #welcome h3,
-    .cta-button {
-        max-width: 800px;
-        overflow-wrap: break-word;
-    }
-
-    #welcome h2 {
-        font-size: 2.5rem;
-        line-height: 3rem;
-        margin-bottom: 10px;
-    }
-
-    #welcome h3 {
-        font-size: 1.2rem;
-        line-height: 1.8rem;
-        margin-bottom: 20px;
-        text-wrap: wrap;
-        object-fit: contain;
-
-    }
-
-    .cta-button {
-        padding: 15px 20px;
-        margin-bottom: 30px;
-        font-size: 18px;
-        border-radius: 15px;
-        transition: background-color 0.3s ease;
-    }
 
     #company-spotlights {
         grid-column: 3;

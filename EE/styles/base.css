@@ -141,6 +141,30 @@ header img {
     content: "❎ ";
 }
 
+.search-bar {
+    width: 100%;
+    border: solid 1px #303030;
+    border-radius: 50px;
+    align-items: center;
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.25em;
+  }
+  
+  #desktop-search {
+    display: none;
+  }
+  
+  #mobile-search {
+    display: block;
+  }
+  
+  #item-search {
+    width: 75%;
+    margin: 0.5em;
+  } 
+
 /* === MAIN LAYOUT === */
 
 main {
