@@ -22,8 +22,26 @@
         flex-direction: row;
     }
 
-    search-bar {
-        margin-right: 90%;
+    .search-bar {
+        margin: 5% 0;
+        margin-left: 27%;
+    }
+    .search-bar--embedded .search-btn{ 
+        min-width: 30%; 
+    }
+    
+    .search-bar--embedded .icon{ 
+        width: 20px; 
+        height: 20px; 
+    }
+
+    .search-input {
+        padding: 12px 12px;
+        font-size: 16px;
+    }
+
+    .search-btn {
+        padding: 0 14px;
     }
 
     #menu {
@@ -42,6 +60,23 @@
         gap: 5px;
         margin-left: 2.5%;
     }
+
+    main.divider{
+        display: block; 
+        margin-top: 2.5%;
+        margin-bottom: 2.5%;
+        min-height: auto;        /* no vertical centering needed for full-width band */
+        padding: 0;              /* edge-to-edge band */
+      }
+      main.divider .success-div{
+        width: 96%;
+        max-width: none;
+        margin: 0;
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;        /* flat edges to span page */
+        padding: 56px 24px;      /* taller band feel */
+      }
 
     header h1 {
         grid-column: 2 / 3;

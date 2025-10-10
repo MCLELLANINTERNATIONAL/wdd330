@@ -151,19 +151,19 @@ header img {
     margin-bottom: 1em;
     padding: 0.25em;
 }
-  
+
 #desktop-search {
     display: none;
 }
-  
+
 #mobile-search {
     display: block;
 }
-  
+
 #item-search {
     width: 75%;
     margin: 0.5em;
-} 
+}
 
 /* === MAIN LAYOUT === */
 
@@ -178,7 +178,8 @@ main {
     border: 1px solid var(--ee-gray-50);
 }
 
-.success-div h2, p {
+.success-div h2,
+p {
     text-align: center;
     font-weight: 800;
 }
@@ -298,11 +299,12 @@ button {
     cursor: pointer;
 }
 
-.divider {
+/*.divider {
     border-bottom: 2px solid var(--primary-color);
+    text-align: center;
 }
 
-.search-bar {
+/*.search-bar {
     width: 30%;
     border: solid 1px #303030;
     border-radius: 50px;
@@ -325,6 +327,71 @@ button {
 #item-search {
     width: 75%;
     margin: 0.5em;
+}*/
+
+.search-bar {
+    display: flex;
+    width: 100%;
+    max-width: 30%;
+    margin: 5% 3%;
+    border-radius: 9px;
+    border: 2px solid var(--border);
+    background: linear-gradient(#f6b757, #f0a83a);
+    /* thin top/bottom edge like Amazon */
+    padding: 2px;
+    box-shadow: inset 0 0 0 1px var(--border-dark);
+    max-inline-size: 20%;
+}
+
+.search-input {
+    flex: 1;
+    padding: 14px 14px;
+    border: none;
+    border-radius: 7px 0 0 7px;
+    outline: none;
+    min-width: 0;  
+    background: var(--bg);
+    color: var(--ee-primary);
+    font-weight: 800;
+    font: 16px/1.2;
+}
+
+.search-input::placeholder {
+    color: var(--placeholder);
+    font-weight: 800;
+}
+
+.search-btn {
+    display: grid;
+    place-items: center;
+    padding: 0 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 0 7px 7px 0;
+    background: linear-gradient(var(--btn), var(--btn-accent));
+    transition: filter .15s ease, transform .02s ease;
+}
+
+.search-btn:active {
+    transform: translateY(1px);
+}
+
+.search-btn:hover {
+    filter: brightness(1.02);
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    color: #2a2a2a;
+    /* magnifier color */
+}
+
+/* Focus outline when tabbing into form */
+.search-bar:focus-within {
+    box-shadow:
+        0 0 0 3px var(--ring),
+        inset 0 0 0 1px var(--border-dark);
 }
 
 /* End utility classes */
@@ -351,27 +418,31 @@ header .cart-btn:hover {
 
 /* Inline SVG */
 /* give the header a bit of bottom padding so the icon doesn't overlap content */
-header.has-corner-cart { padding-bottom: 50px; }
+header.has-corner-cart {
+    padding-bottom: 50px;
+}
 
 /* pin the cart button to the bottom-left corner */
-header.has-corner-cart .cart-btn{
-  position: absolute;
-  right: 20px;      /* match your header side padding */
-  bottom: 10px;
-  z-index: 2;
+header.has-corner-cart .cart-btn {
+    position: absolute;
+    right: 20px;
+    /* match your header side padding */
+    bottom: 10px;
+    z-index: 2;
 }
 
 /* badge position (you likely already have this) */
-#cart-badge{
-  position: absolute;
-  top: -6px;
-  right: -6px;
+#cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
 }
+
 /* badge position (you likely already have this) */
-#cart-badge{
-  position: absolute;
-  top: -6px;
-  right: -6px;
+#cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
 }
 
 .cart-img {
@@ -610,8 +681,10 @@ header.has-corner-cart .cart-btn{
     z-index: 2;
 }
 
-@keyframes icon-bump { 
-    50% { transform: scale(1.15); } 
+@keyframes icon-bump {
+    50% {
+        transform: scale(1.15);
+    }
 }
 
 @keyframes cart-bounce {
@@ -638,7 +711,7 @@ header.has-corner-cart .cart-btn{
     animation: cart-bounce 0.5s ease;
 }
 
-@keyframes animatetop{
+@keyframes animatetop {
     from {
         top: -300px;
         opacity: 0;
@@ -656,8 +729,8 @@ header.has-corner-cart .cart-btn{
 }
 
 .cart-card__price {
-    grid-row: 2;
-    grid-column: 3;
+    grid-row: 4;
+    grid-column: 4;
 }
 
 .product-media {
@@ -670,6 +743,40 @@ header.has-corner-cart .cart-btn{
 .quick-view-modal {
     max-width: 500px;
     align-items: center;
+}
+
+.divider {
+    /* override previous .divider */
+    display: grid;
+    /* or: display:flex; align-items:center; justify-content:center; */
+    place-items: center;
+    min-height: calc(61vh - 140px);
+    padding: 16px;
+    border: 0;
+    /* remove bottom border on this page */
+    background: #fff;
+}
+
+/* Make the card look tidy and responsive */
+.success-div {
+    width: min(720px, 95%);
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--ee-gray-50);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.324);
+}
+
+/* FIX the selector so it doesn't hit every <p> */
+.success-div h2,
+.success-div p {
+    text-align: center;
+    font-weight: 800;
+}
+
+.success-div h2 {
+    color: var(--ee-amber);
 }
 
 /* === SPOTLIGHTS === */
