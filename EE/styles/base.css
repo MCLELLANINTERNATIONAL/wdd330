@@ -467,6 +467,7 @@ header.has-corner-cart .cart-btn {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     margin-top: 2rem;
+    margin-bottom: 2rem;
     padding: 0 12px
   }
   
