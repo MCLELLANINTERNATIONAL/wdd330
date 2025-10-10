@@ -41,7 +41,7 @@
             <input type="search" name="q" class="search-input" placeholder="Search Events" aria-label="Search events" />
             <button class="search-btn" type="submit" aria-label="Search">
                 <!-- Magnifier icon (SVG) -->
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
                     <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" />
@@ -68,7 +68,39 @@
     </div>
 
     <main>
-
+        <section id="category-icons">
+            <!-- Music -->
+            <div class="icons" id="music">
+              <a class="card__link" href="/music" aria-label="Browse Music events">
+                <img class="card__img" src="images/music.png" alt="Music">
+                <h3 class="card__title">Music</h3>
+              </a>
+            </div>
+        
+            <!-- Theatre -->
+            <div class="icons" id="theatre">
+              <a class="card__link" href="/theatre" aria-label="Browse Theatre shows">
+                <img class="card__img" src="images/theatre.png" alt="Theatre">
+                <h3 class="card__title">Theatre</h3>
+              </a>
+            </div>
+        
+            <!-- Cinema -->
+            <div class="icons" id="cinema">
+              <a class="card__link" href="/cinema" aria-label="Browse Cinema listings">
+                <img class="card__img" src="images/cinema.png" alt="Cinema">
+                <h3 class="card__title">Cinema</h3>
+              </a>
+            </div>
+        
+            <!-- Sport -->
+            <div class="icons" id="sport">
+              <a class="card__link" href="/sport" aria-label="Browse Sport events">
+                <img class="card__img" src="images/sport.png" alt="Sport">
+                <h3 class="card__title">Sport</h3>
+              </a>
+            </div>
+        </section>
     </main>
 
     <footer>

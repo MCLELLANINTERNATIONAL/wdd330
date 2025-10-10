@@ -57,13 +57,37 @@
     }
 
     main {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1.24fr;
-        grid-template-rows: auto auto auto auto auto;
         gap: 5px;
         margin-left: 2.5%;
     }
 
+    #category-icons{
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Make card images bigger */
+    .card__img{
+        width: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Ensure the card itself doesn't constrain width/height */
+    .icons,
+    .icons .card__link{
+        width: 100%;
+        height: 100%;
+    }
+
+    .icons{ cursor: pointer; 
+    }
+
+    .icons:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    }
+    
     main.divider{
         display: block; 
         margin-top: 2.5%;

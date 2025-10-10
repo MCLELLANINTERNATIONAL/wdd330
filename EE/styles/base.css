@@ -368,7 +368,7 @@ button {
     filter: brightness(1.02);
 }
 
-.icon {
+.search-icon {
     width: 24px;
     height: 24px;
     color: #2a2a2a;
@@ -460,6 +460,70 @@ header.has-corner-cart .cart-btn {
     /* badge is NOT a button */
     z-index: 2;
 }
+
+/* Grid layout for all cards */
+#category-icons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 2rem;
+    padding: 0 12px
+  }
+  
+/* Each “card” */
+.icons {
+    background: #fff;
+    border: 1px solid var(--ee-gray-50, #e5e7eb);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.469);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.icons:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    cursor: pointer;
+}
+
+ /* Image inside card */
+.card__img {
+    width: 100%;
+    aspect-ratio: 3/2;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+/* Title under image */
+.card__title {
+    margin: 0;
+    padding: 12px 14px;
+    text-align: center;
+    color: var(--ee-black);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Link wrapper for accessibility */
+.icons a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+}
+
+/* Link wrapper */
+.icons .card__link{
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+}
+
+
 
 /* Styles for product lists */
 .product-card {
