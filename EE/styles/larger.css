@@ -1,4 +1,4 @@
-@media screen and (min-width: 760px) {
+@media screen and (min-width: 760px) {   
     .navigation {
         display: flex;
         flex-direction: row;
@@ -67,8 +67,9 @@
         margin-bottom: 2.5%;
         min-height: auto;        /* no vertical centering needed for full-width band */
         padding: 0;              /* edge-to-edge band */
-      }
-      main.divider .success-div{
+    }
+
+    main.divider .success-div{
         width: 96%;
         max-width: none;
         margin: 0;
@@ -76,7 +77,7 @@
         border-right: 0;
         border-radius: 0;        /* flat edges to span page */
         padding: 56px 24px;      /* taller band feel */
-      }
+    }
 
     header h1 {
         grid-column: 2 / 3;
