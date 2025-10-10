@@ -22,10 +22,13 @@
         flex-direction: row;
     }
 
-    .search-bar {
-        margin: 5% 0;
-        margin-left: 27%;
-    }
+    .search-bar{
+        position: relative;
+        max-width: clamp(240px, 82vw, 420px);
+        margin-left: auto;   /* left auto-aligned -> pushes to the right */
+        margin-right: 16px;  /* spacing from the right edge */
+     }
+    
     .search-bar--embedded .search-btn{ 
         min-width: 30%; 
     }
