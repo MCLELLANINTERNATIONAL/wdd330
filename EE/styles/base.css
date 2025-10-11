@@ -43,7 +43,7 @@ header {
     font-weight: bolder;
     font-size: 1rem;
     padding: 15px 20px;
-    gap: clamp(1rem, 6vw, 5rem); 
+    gap: clamp(1rem, 6vw, 5rem);
 }
 
 header img {
@@ -52,10 +52,11 @@ header img {
     object-fit: cover;
 }
 
-header{
-    align-items:center;
-    gap: clamp(1rem, 6vw, 5rem);    /* KEY: controls space logo↔H1 */
-  }
+header {
+    align-items: center;
+    gap: clamp(1rem, 6vw, 5rem);
+    /* KEY: controls space logo↔H1 */
+}
 
 /* === NAV === */
 
@@ -190,6 +191,45 @@ p {
 
 .success-div h2 {
     color: var(--ee-amber);
+}
+
+/* ===== Breadcrumbs ===== */
+#breadcrumbs {
+    /* keep it aligned with your page content */
+    max-width: 1200px;
+    /* match your content width */
+    padding: 1rem;
+    /* consistent left/right gutter */
+    font-size: 1rem;
+    color: var(--ee-dark, #525252);
+    /* make it sit on one line but wrap nicely if needed */
+    overflow-wrap: anywhere;
+}
+
+
+/* links (previous levels) */
+#breadcrumbs a {
+    color: var(--ee-amber, #D97706);
+    font-weight: 800;
+}
+
+#breadcrumbs a:hover,
+#breadcrumbs a:focus {
+    cursor: pointer;
+}
+
+/* current page (you render as <span>…</span>) */
+#breadcrumbs span {
+    font-weight: 500;
+    /* bold */
+    color: var(--ee-black, #000000);
+    /* stronger color */
+}
+
+/* soften the “ > ” if you keep it in your HTML string */
+#breadcrumbs {
+    word-spacing: .2rem;
+    /* adds a touch of space around the > characters */
 }
 
 /* === TOP BANNER === */
@@ -382,7 +422,9 @@ button {
         inset 0 0 0 1px var(--border-dark);
 }
 
-.search-wrap{ flex: 1 1 100%; } 
+.search-wrap {
+    flex: 1 1 100%;
+}
 
 /* End utility classes */
 
@@ -469,8 +511,8 @@ header.has-corner-cart .cart-btn {
     margin-top: 2rem;
     margin-bottom: 2rem;
     padding: 0 12px
-  }
-  
+}
+
 /* Each “card” */
 .icons {
     background: #fff;
@@ -480,13 +522,14 @@ header.has-corner-cart .cart-btn {
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .icons:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
     cursor: pointer;
 }
 
- /* Image inside card */
+/* Image inside card */
 .card__img {
     width: 100%;
     aspect-ratio: 3/2;
@@ -516,7 +559,7 @@ header.has-corner-cart .cart-btn {
 }
 
 /* Link wrapper */
-.icons .card__link{
+.icons .card__link {
     display: flex;
     flex-direction: column;
     text-decoration: none;
@@ -832,73 +875,6 @@ header.has-corner-cart .cart-btn {
 
 .success-div h2 {
     color: var(--ee-amber);
-}
-
-/* === SPOTLIGHTS === */
-#dynamic-spotlights {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
-    padding: 1rem;
-    margin: 2rem auto;
-    max-width: 1200px;
-}
-
-.spotlight-card {
-    border: 3px solid var(--ee-amber);
-    box-shadow: 0 5px 8px rgba(6, 238, 6, .2);
-    /* subtle green glow */
-    padding: 1rem;
-    background-color: #fff;
-    line-height: 1.8em;
-    width: 350px;
-    min-height: 400px;
-    text-align: center;
-    border-radius: 8px;
-    transition: transform .3s ease;
-}
-
-.spotlight-card:hover {
-    transform: translateY(-5px);
-}
-
-.spotlight-img {
-    display: block;
-    margin: 0 auto .25rem;
-    max-height: 100px;
-    background: none;
-    padding: 0;
-    border: none;
-    border-radius: 0;
-    object-fit: cover;
-}
-
-.spotlight-card h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: .5rem;
-}
-
-.spotlight-card p {
-    font-size: 1rem;
-    color: #444;
-    margin: .25rem 0;
-    font-weight: normal;
-}
-
-.spotlight-card a {
-    display: inline-block;
-    margin-top: .5rem;
-    color: var(--ee-primary);
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.spotlight-card a:hover {
-    text-decoration: underline;
-    cursor: pointer;
 }
 
 /* === FOOTER === */
