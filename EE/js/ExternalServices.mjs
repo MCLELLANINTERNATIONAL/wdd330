@@ -21,7 +21,7 @@ export default class ProductData {
       ? Array.isArray(category)
         ? category
         : [category]
-      : ['backpacks', 'sleeping-bags', 'tents', 'hammocks'];
+      : ['music', 'theatre', 'cinema', 'sport'];
     const results = [];
 
     // fetch each category sequentially
