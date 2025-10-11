@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!h2) return 'Product';
 
     const text = h2.textContent.toLowerCase();
-    const keywords = ['backpack', 'tent', 'hammock', 'sleeping bag'];
+    const keywords = ['music', 'theatre', 'cinema', 'sport'];
 
     // Look for the first keyword in the h2 text
     const match = keywords.find((word) => text.includes(word));
