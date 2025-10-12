@@ -1,6 +1,6 @@
 import { setLocalStorage } from "./utils.mjs";
 
-const baseURL = import.meta.env.VITE_SERVER_URL;
+const eventbriteURL = ''
 
 async function convertToJson(res) {
   const jsonResponse = await res.json();
@@ -14,25 +14,40 @@ export default class ProductData {
   }
 
   async getData(category = this.category) {
-    if (!category || category === 'null' || category === 'undefined') {
-      category = null;
-    }
-    const categoriesToFetch = category
-      ? Array.isArray(category)
-        ? category
-        : [category]
-      : ['music', 'theatre', 'cinema', 'sport'];
-    const results = [];
+    const apiKey = 'HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq';
+    const baseUrl = 'https://app.ticketmaster.com/discovery/v1/events.json';
+    const ticketmasterURL = '';
 
-    // fetch each category sequentially
-    for (const cat of categoriesToFetch) {
-      const response = await fetch(`${baseURL}products/search/${cat}`);
-      const data = await convertToJson(response);
-      results.push(...data.Result);
+    https://app.ticketmaster.com/discovery/v2/events.json?apikey=HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq&city=Edinburgh&segmentId=KZFzniwnSyZfZ7v7nJ
+
+    // Map your categories to segment IDs or keywords
+    const categoryMap = {
+      music: 'KZFzniwnSyZfZ7v7nJ',
+      theatre: 'KZFzniwnSyZfZ7v7na',
+      sports: 'KZFzniwnSyZfZ7v7nE',
+      cinema: '' // Cinema may need to use keyword or genre filter
+    };
+
+    let url = `${baseUrl}?apikey=${apiKey}&city=Edinburgh&size=50`; // e.g. size=50 results
+
+    if (category === 'cinema') {
+      // Cinema fallback: use keyword search for film or movie titles
+      url = `${eventbriteURL}`;
+    } else if (categoryMap[category]) {
+      url += `&segmentId=${categoryMap[category]}`;
     }
-    return results;
+
+    // Optional: add city, locale filters if needed
+    // url += '&city=YourCity&locale=en-us'
+
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data._embedded && data._embedded.events) {
+      return data._embedded.events;
+    } else {
+      return [];
+    }
   }
-
   async findProductById(id) {
     const products = await this.getData();
     return products.find(item => item.Id === id);
@@ -48,6 +63,6 @@ export default class ProductData {
     };
     console.log('Order Sent');
     setLocalStorage('order', payload);
-    return await fetch(`${baseURL}checkout/`, options).then(convertToJson);
+    return await fetch('src/checkout/', options).then(convertToJson);
   }
 }
