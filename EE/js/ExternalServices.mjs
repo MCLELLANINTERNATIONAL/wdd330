@@ -8,7 +8,7 @@ async function convertToJson(res) {
   return jsonResponse;
 }
 
-export default class ProductData {
+export default class eventData {
   constructor(category) {
     this.category = category;
   }
@@ -48,9 +48,9 @@ export default class ProductData {
       return [];
     }
   }
-  async findProductById(id) {
-    const products = await this.getData();
-    return products.find(item => item.Id === id);
+  async findeventById(id) {
+    const events = await this.getData();
+    return events.find(item => item.Id === id);
   }
 
   async checkout(payload) {

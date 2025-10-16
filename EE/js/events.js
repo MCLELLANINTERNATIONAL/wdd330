@@ -1,6 +1,6 @@
 // events.js — Edinburgh Events (Ticketmaster + Eventbrite)
 // --------------------------------------------------------
-// Fill in your keys/tokens:
+// Keys/tokens:
 const TM_KEY = "HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq";           // Ticketmaster API key
 const EB_TOKEN = "3JHCKH7IX3J5SBA63XCU";         // Eventbrite personal OAuth token (Bearer)
 
@@ -134,7 +134,7 @@ async function getTicketmasterEvents(category, { size = 100 } = {}) {
 }
 
 // ---- Eventbrite (Cinema) ----
-// We’ll search Film/Media (category 105) and also match "cinema OR film" in Edinburgh.
+// Search Film/Media (category 105) and also match "cinema OR film" in Edinburgh.
 // Expand venue so we can normalize without extra calls.
 function normalizeEB(ev) {
   const venue = ev.venue || {};

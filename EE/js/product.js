@@ -1,4 +1,4 @@
-// product.js — SINGLE EVENT DETAILS
+// event.js — SINGLE EVENT DETAILS
 import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from '../events.js';
 import { flyToCart } from "../flyToCart.js";
 import { updateCartBadge, getParam, loadHeaderFooter } from "../utils.mjs";
@@ -83,7 +83,7 @@ function renderError(msg) {
 }
 
 async function init() {
-  // expects product.html?src={ticketmaster|eventbrite}&id={EVENT_ID}
+  // expects event.html?src={ticketmaster|eventbrite}&id={EVENT_ID}
   const src = getParam("src");
   const id = getParam("id");
 

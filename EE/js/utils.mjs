@@ -1,4 +1,4 @@
-import ProductData from "./ExternalServices.mjs";
+import eventData from "../ExternalServices.mjs";
 // wrapper for querySelector...returns matching element
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
@@ -34,8 +34,8 @@ export function setClick(selector, callback) {
 export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const product = urlParams.get(param);
-  return product
+  const event = urlParams.get(param);
+  return event
 }
 
 export function renderListWithTemplate(
@@ -54,7 +54,7 @@ export function renderListWithTemplate(
   if (!parent) return;
   if (clear) parent.innerHTML = '';
   if (!Array.isArray(list) || list.length === 0) {
-    parent.insertAdjacentHTML(position, '<p>No products found.</p>');
+    parent.insertAdjacentHTML(position, '<p>No events found.</p>');
     return;
   }
 

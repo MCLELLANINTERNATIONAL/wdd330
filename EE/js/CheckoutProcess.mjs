@@ -1,8 +1,8 @@
-import ProductData from './ExternalServices.mjs';
+import eventData from './ExternalServices.mjs';
 import { alertMessage, getLocalStorage, loadHeaderFooter, setLocalStorage, removeAllAlerts } from './utils.mjs';
 
 loadHeaderFooter();
-const services = new ProductData();
+const services = new eventData();
 let error = false; 
 
 function formDataToJSON(formElement) {

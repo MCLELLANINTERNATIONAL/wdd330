@@ -1,35 +1,35 @@
 import { getLocalStorage, setLocalStorage, updateCartBadge, bounceCartIcon, getParam } from './utils.mjs';
 
-export default class ProductDetails {
-  constructor(productOrId, dataSource) {
+export default class eventDetails {
+  constructor(eventOrId, dataSource) {
     this.dataSource = dataSource;
     
-    if (typeof productOrId === 'object') {
-      // already have product data
-      this.product = productOrId;
-      this.productId = productOrId.Id;
+    if (typeof eventOrId === 'object') {
+      // already have event data
+      this.event = eventOrId;
+      this.eventId = eventOrId.Id;
     } else {
-      this.productId = productOrId;
-      this.product = null;
+      this.eventId = eventOrId;
+      this.event = null;
     }
   }
     async init() {
-        this.product = await this.dataSource.findProductById(this.productId);
-        this.renderProductDetails();
+        this.event = await this.dataSource.findeventById(this.eventId);
+        this.rendereventDetails();
         document
             .getElementById('addToCart')
-            .addEventListener('click', this.addProductToCart.bind(this));
+            .addEventListener('click', this.addeventToCart.bind(this));
         //ensure badge correct on load
         updateCartBadge();
     }
-    async addProductToCart() {
-        this.product = await this.dataSource.findProductById(this.productId);
+    async addeventToCart() {
+        this.event = await this.dataSource.findeventById(this.eventId);
         const cart = getLocalStorage('so-cart') || [];
-        const productId = this.product.Id
-        const existing = cart.find(item => item.Id === productId);
+        const eventId = this.event.Id
+        const existing = cart.find(item => item.Id === eventId);
 
         // compute per-unit pricing once here
-        const { finalPrice, comparePrice, discountPct, saveAmount } = computeDiscount(this.product);
+        const { finalPrice, comparePrice, discountPct, saveAmount } = computeDiscount(this.event);
 
         if (existing) {
             existing.quantity = (existing.quantity || 1) + 1;
@@ -42,7 +42,7 @@ export default class ProductDetails {
           }
         } else {
           // push a shallow clone with the discount metadata
-          const item = { ...this.product };
+          const item = { ...this.event };
           item.quantity        = 1;
           item._discountPct    = discountPct;
           item._discountAmount = Number(saveAmount.toFixed(2));
@@ -51,14 +51,14 @@ export default class ProductDetails {
           cart.push(item);
         }
 
-          alert(`${this.product.Name} has been added to your cart.`);
+          alert(`${this.event.Name} has been added to your cart.`);
           setLocalStorage('so-cart', cart);
           updateCartBadge();
           bounceCartIcon();
       }
 
-    renderProductDetails() {
-        productDetailsTemplate(this.product);
+    rendereventDetails() {
+        eventDetailsTemplate(this.event);
     }
 }
 
@@ -70,7 +70,7 @@ function firstNumber(...candidates) {
     return null;
   }
   
-  // Deterministic 10–40% based on product.Id (so it stays stable)
+  // Deterministic 10–40% based on event.Id (so it stays stable)
   function seededPercent(id, min = 10, max = 40) {
     const s = String(id ?? '');
     let hash = 0;
@@ -81,16 +81,16 @@ function firstNumber(...candidates) {
     return min + (hash % span); // integer in [min, max]
   }
   
-  function computeDiscount(product) {
-    const finalPrice = Number(product.FinalPrice);
+  function computeDiscount(event) {
+    const finalPrice = Number(event.FinalPrice);
   
     // Try to find a real "compare at" price from common API fields
     const compareAt = firstNumber(
-      product.SuggestedRetailPrice,
-      product.ListPrice,
-      product.MSRP,
-      product.Price,
-      product?.Colors?.[0]?.Price
+      event.SuggestedRetailPrice,
+      event.ListPrice,
+      event.MSRP,
+      event.Price,
+      event?.Colors?.[0]?.Price
     );
   
     let discountPct, comparePrice;
@@ -102,7 +102,7 @@ function firstNumber(...candidates) {
       comparePrice = finalPrice / (1 - discountPct / 100);
     } else {
       // No compare-at available → generate deterministic 10–40%
-      discountPct = seededPercent(product.Id, 10, 40);
+      discountPct = seededPercent(event.Id, 10, 40);
       comparePrice = finalPrice / (1 - discountPct / 100);
     }
   
@@ -116,25 +116,25 @@ function firstNumber(...candidates) {
     };
   }
 
-function productDetailsTemplate(product) {
-    document.querySelector('h2').textContent = product.Brand.Name; 
-    document.querySelector('h3').textContent = product.NameWithoutBrand; 
+function eventDetailsTemplate(event) {
+    document.querySelector('h2').textContent = event.Brand.Name; 
+    document.querySelector('h3').textContent = event.NameWithoutBrand; 
    
-    const productImage = document.getElementById('productImage'); 
-    productImage.src = product.Images.PrimaryLarge; 
-    productImage.srcset = `
-    ${product.Images.PrimaryLarge} 320w,
-    ${product.Images.PrimaryExtraLarge} 600w`;
-    productImage.sizes = '(max-width: 600px) 100vw, 600px';
-    productImage.alt = product.NameWithoutBrand;
+    const eventImage = document.getElementById('eventImage'); 
+    eventImage.src = event.Images.PrimaryLarge; 
+    eventImage.srcset = `
+    ${event.Images.PrimaryLarge} 320w,
+    ${event.Images.PrimaryExtraLarge} 600w`;
+    eventImage.sizes = '(max-width: 600px) 100vw, 600px';
+    eventImage.alt = event.NameWithoutBrand;
 
   function money(n) { return `$${Number(n).toFixed(2)}`; }
 
     // --- Discount logic & pricing UI ---
-  const { finalPrice, comparePrice, discountPct, saveAmount } = computeDiscount(product);
+  const { finalPrice, comparePrice, discountPct, saveAmount } = computeDiscount(event);
 
   // Price row
-  const priceEl = document.getElementById('productPrice');
+  const priceEl = document.getElementById('eventPrice');
   if (priceEl) {
     priceEl.innerHTML = `
     <div class="price-compare" aria-label="Original price">${money(comparePrice)}</div>
@@ -143,19 +143,19 @@ function productDetailsTemplate(product) {
   `;
 }
 
-  const saveEl = document.getElementById('productSave');
+  const saveEl = document.getElementById('eventSave');
   if (saveEl) {
     saveEl.textContent = `You save $${saveAmount.toFixed(2)} (${discountPct}% off)`;
   }
 
   // --- Discount flag on image ONLY ---
-  const img = document.getElementById('productImage');
+  const img = document.getElementById('eventImage');
   if (img) {
     // Ensure a positioned wrapper around the image
-    let wrapper = img.closest('.product-media');
+    let wrapper = img.closest('.event-media');
     if (!wrapper) {
         wrapper = document.createElement('div');
-        wrapper.className = "product-media";
+        wrapper.className = "event-media";
         // Insert wrapper before image and move image inside it
         img.parentElement.insertBefore(wrapper, img);
         wrapper.appendChild(img);
@@ -174,50 +174,50 @@ function productDetailsTemplate(product) {
     }
 
     // Description
-    const descEl = document.getElementById('productDesc');
+    const descEl = document.getElementById('eventDesc');
     if (descEl) {
-        descEl.innerHTML = product.DescriptionHtmlSimple ?? '';
+        descEl.innerHTML = event.DescriptionHtmlSimple ?? '';
     }
 
     // Color
-    const colorEl = document.getElementById('productColor');
+    const colorEl = document.getElementById('eventColor');
     if (colorEl) {
-        colorEl.textContent = product?.Colors?.[0]?.ColorName ?? '—';
+        colorEl.textContent = event?.Colors?.[0]?.ColorName ?? '—';
     }
 
     // Ensure addToCart has id
     const addBtn = document.getElementById('addToCart');
-    if (addBtn) addBtn.dataset.id = product.Id;
+    if (addBtn) addBtn.dataset.id = event.Id;
 
-    // document.getElementById('productPrice').textContent = product.FinalPrice; 
-    //document.getElementById('productColor').textContent = product.Colors[0].ColorName; 
-    // document.getElementById('productDesc').innerHTML = product.DescriptionHtmlSimple; 
-    //document.getElementById('addToCart').dataset.id = product.Id; 
+    // document.getElementById('eventPrice').textContent = event.FinalPrice; 
+    //document.getElementById('eventColor').textContent = event.Colors[0].ColorName; 
+    // document.getElementById('eventDesc').innerHTML = event.DescriptionHtmlSimple; 
+    //document.getElementById('addToCart').dataset.id = event.Id; 
 }
 
-export function renderProductDetailsHTML(product) {
-  const { finalPrice, comparePrice, discountPct, saveAmount } = computeDiscount(product);
+export function rendereventDetailsHTML(event) {
+  const { finalPrice, comparePrice, discountPct, saveAmount } = computeDiscount(event);
 
   function money(n) { return `$${Number(n).toFixed(2)}`; }
   return `
-    <a href="../product_pages/index.html?category=${getParam('category')}&id=${encodeURIComponent(product.Id)}">
-      <div class="product-modal">
+    <a href="../event_pages/index.html?category=${getParam('category')}&id=${encodeURIComponent(event.Id)}">
+      <div class="event-modal">
         <div id="discountFlag" class="discount-flag">${discountPct}% off</div>
         <img 
-          src="${product.Images.PrimaryMedium}" 
+          src="${event.Images.PrimaryMedium}" 
           srcset="
-            ${product.Images.PrimarySmall} 80w,
-            ${product.Images.PrimaryMedium} 160w
+            ${event.Images.PrimarySmall} 80w,
+            ${event.Images.PrimaryMedium} 160w
           "
           sizes="(max-width: 600px) 50vw, 160px"
-          alt="${product.NameWithoutBrand}"
+          alt="${event.NameWithoutBrand}"
         >
-        <h2>${product.Brand?.Name ?? ''}</h2>
-        <h3>${product.NameWithoutBrand ?? product.Name}</h3>
+        <h2>${event.Brand?.Name ?? ''}</h2>
+        <h3>${event.NameWithoutBrand ?? event.Name}</h3>
         <p class="price-final">Price: ${money(finalPrice)}</p>
-        <p class="description">${product.DescriptionHtmlSimple ?? ''}</p>
+        <p class="description">${event.DescriptionHtmlSimple ?? ''}</p>
       </a>
-      <button id="addToCartModal" data-id="${product.Id}">Add to Cart</button>
+      <button id="addToCartModal" data-id="${event.Id}">Add to Cart</button>
     </div>
   `;
 }

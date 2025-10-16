@@ -10,7 +10,7 @@ import ShoppingCart from './ShoppingCart.mjs';
 loadHeaderFooter();
 
 let datasource = getLocalStorage('so-cart');
-const element = document.querySelector('.product-list');
+const element = document.querySelector('.event-list');
 const shopCart = new ShoppingCart(datasource, element);
 shopCart.init();
 
@@ -18,7 +18,7 @@ const current = getLocalStorage('so-cart') || [];
 annotateLineDiscounts(current);
 updateCartFooter(current);
 
-function showRemoveMessage(product, onChoice) {
+function showRemoveMessage(event, onChoice) {
   const overlay = document.getElementById('modalOverlay');
   const dialog = document.getElementById('removeDialog');
   const dialogTitle = document.getElementById('dialogTitle');
@@ -35,8 +35,8 @@ function showRemoveMessage(product, onChoice) {
   let initialFocus = null;
 
   // Case 1: only one
-  if (product.quantity === 1) {
-    msg.textContent = `Are you sure you want to remove ${product.Name}?`;
+  if (event.quantity === 1) {
+    msg.textContent = `Are you sure you want to remove ${event.Name}?`;
     opts.innerHTML = `
       <button id="confirmRemove">Remove</button>
       <button id="cancelRemove">Cancel</button>
@@ -53,8 +53,8 @@ function showRemoveMessage(product, onChoice) {
   }
 
   // Case 2: exactly 2
-  else if (product.quantity === 2) {
-    msg.textContent = `You have 2 of ${product.Name}. Do you want to remove only one, both, or cancel?`;
+  else if (event.quantity === 2) {
+    msg.textContent = `You have 2 of ${event.Name}. Do you want to remove only one, both, or cancel?`;
     opts.innerHTML = `
       <button id="removeOne">Remove One</button>
       <button id="removeAll">Remove Both</button>
@@ -77,9 +77,9 @@ function showRemoveMessage(product, onChoice) {
 
   // Case 3: more than 2
   else {
-    msg.textContent = `You have ${product.quantity} of ${product.Name}. How many would you like to remove?`;
+    msg.textContent = `You have ${event.quantity} of ${event.Name}. How many would you like to remove?`;
     opts.innerHTML = `
-      <input id="removeCount" type="number" min="1" max="${product.quantity}" value="1">
+      <input id="removeCount" type="number" min="1" max="${event.quantity}" value="1">
       <button id="confirmRemove">Remove</button>
       <button id="removeAll">Remove All</button>
       <button id="cancelRemove">Cancel</button>
@@ -88,8 +88,8 @@ function showRemoveMessage(product, onChoice) {
     const input = document.getElementById('removeCount');
     document.getElementById('confirmRemove').onclick = () => {
       const val = parseInt(input.value, 10);
-      if (Number.isNaN(val) || val < 1 || val > product.quantity) {
-        alert(`Please enter a number between 1 and ${product.quantity}`);
+      if (Number.isNaN(val) || val < 1 || val > event.quantity) {
+        alert(`Please enter a number between 1 and ${event.quantity}`);
         return;
       }
       cleanup();
@@ -291,16 +291,16 @@ element.addEventListener('click', (e) => {
   const removeBtn = e.target.closest('.cart-remove');
   if (removeBtn) {
     const id = removeBtn.dataset.id;
-    const product = datasource.find((item) => item.Id === id);
-    if (!product) return;
+    const event = datasource.find((item) => item.Id === id);
+    if (!event) return;
 
-    showRemoveMessage(product, (choice) => {
-      if (choice.type === 'removeOne') product.quantity -= 1;
+    showRemoveMessage(event, (choice) => {
+      if (choice.type === 'removeOne') event.quantity -= 1;
       else if (choice.type === 'removeAll')
         datasource = datasource.filter((i) => i.Id !== id);
       else if (choice.type === 'removeSome') {
-        product.quantity -= choice.count;
-        if (product.quantity <= 0)
+        event.quantity -= choice.count;
+        if (event.quantity <= 0)
           datasource = datasource.filter((i) => i.Id !== id);
       }
 
@@ -313,9 +313,9 @@ element.addEventListener('click', (e) => {
   }
 });
 
-function handleIncrease(productId) {
+function handleIncrease(eventId) {
   const cartItems = getLocalStorage('so-cart') || [];
-  const item = cartItems.find((i) => i.Id === productId);
+  const item = cartItems.find((i) => i.Id === eventId);
   if (!item) return;
   item.quantity = (item.quantity || 1) + 1;
   setLocalStorage('so-cart', cartItems);
@@ -326,9 +326,9 @@ function handleIncrease(productId) {
   bounceCartIcon();
 }
 
-function handleDecrease(productId) {
+function handleDecrease(eventId) {
   const cartItems = getLocalStorage('so-cart') || [];
-  const item = cartItems.find((i) => i.Id === productId);
+  const item = cartItems.find((i) => i.Id === eventId);
   if (!item) return;
   item.quantity = Math.max((item.quantity || 1) - 1, 1);
   setLocalStorage('so-cart', cartItems);

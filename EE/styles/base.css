@@ -458,7 +458,7 @@ header.has-corner-cart .cart-btn {
     height: 100%;
 }
 
-/* Styles for product lists */
+/* Styles for event lists */
 mission {
     position: absolute;
     top: 1rem;
@@ -477,7 +477,7 @@ mission {
     text-align: center;
   }
 
-.product-card {
+.event-card {
     position: relative;
     flex: 1 1 45%;
     margin: 0.25em;
@@ -487,9 +487,9 @@ mission {
     min-height: 420px;
 }
 
-.product-card h2,
-.product-card h3,
-.product-card p {
+.event-card h2,
+.event-card h3,
+.event-card p {
     margin: 0.5em 0;
 }
 
@@ -501,7 +501,7 @@ mission {
     font-size: 1em;
 }
 
-/* Product Quick View */
+/* event Quick View */
 .quick-view-modal {
     position: fixed;
     top: 25%;
@@ -546,15 +546,15 @@ mission {
     }
 }
 
-/* End product list card */
+/* End event list card */
 
-.product-detail {
+.event-detail {
     padding: 1em;
     max-width: 500px;
     margin: auto;
 }
 
-.product-detail img {
+.event-detail img {
     width: 100%;
 }
 
@@ -737,7 +737,7 @@ mission {
     grid-column: 4;
 }
 
-.product-media {
+.event-media {
     position: relative;
     display: inline-block;
 }

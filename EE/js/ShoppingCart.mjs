@@ -2,12 +2,12 @@ function cartItemTemplate(item) {
  // ensure quantity
  const qty = Number(item.quantity || 1);
 
- // per-unit final (after discount) coming from Product Details, fallback to API fields
+ // per-unit final (after discount) coming from event Details, fallback to API fields
  const unitFinal = Number(
    item?._finalPrice ?? item?.FinalPrice ?? item?.Price ?? item?.ListPrice ?? 0
  );
 
- // use the exact percent saved by Product Details if present; else derive from a compare-like price
+ // use the exact percent saved by event Details if present; else derive from a compare-like price
  let unitPct = Number(item?._discountPct);
  if (!Number.isFinite(unitPct)) {
    const compareGuess = Number(
@@ -32,7 +32,7 @@ function cartItemTemplate(item) {
    item?.Images?.PrimarySmall ||
    item?.Images?.PrimaryLarge ||
    '';
- const alt = item?.Name ?? "Product";
+ const alt = item?.Name ?? "event";
   
   
   return `

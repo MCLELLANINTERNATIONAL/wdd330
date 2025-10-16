@@ -1,39 +1,39 @@
 import { renderListWithTemplate, getParam } from './utils.mjs';
-import ProductData from './ExternalServices.mjs';
-import ProductDetails, { renderProductDetailsHTML } from './ProductDetails.mjs';
+import eventData from './ExternalServices.mjs';
+import eventDetails, { rendereventDetailsHTML } from './eventDetails.mjs';
 
-function productCardTemplate(product) {
+function eventCardTemplate(event) {
     // matches the structure in /index.html
     const category = getParam('category')
-    const id = product?.Id ?? '';
-    const href = `../product_pages/index.html?category=${category}&id=${encodeURIComponent(id)}`;
-    const img = product?.Images.PrimaryMedium ?? '';
-    const brand = product?.Brand?.Name ?? '';
-    const name = product?.name;
+    const id = event?.Id ?? '';
+    const href = `../event_pages/index.html?category=${category}&id=${encodeURIComponent(id)}`;
+    const img = event?.Images.PrimaryMedium ?? '';
+    const brand = event?.Brand?.Name ?? '';
+    const name = event?.name;
     const price =
-      typeof product?.FinalPrice === 'number'
-        ? `$${product.FinalPrice.toFixed(2)}`
-        : `$${product?.FinalPrice ?? '0.00'}`;
+      typeof event?.FinalPrice === 'number'
+        ? `$${event.FinalPrice.toFixed(2)}`
+        : `$${event?.FinalPrice ?? '0.00'}`;
   
-    return `<li class="product-card">
+    return `<li class="event-card">
       <a href="${href}">
-        <p class="product-card__price">${price}</p>
+        <p class="event-card__price">${price}</p>
         <img 
-          src="${product.Images.PrimaryMedium}" 
+          src="${event.Images.PrimaryMedium}" 
           srcset="
-            ${product.Images.PrimarySmall} 80w,
-            ${product.Images.PrimaryMedium} 160w
+            ${event.Images.PrimarySmall} 80w,
+            ${event.Images.PrimaryMedium} 160w
           "
           sizes="(max-width: 600px) 50vw, 160px"
           alt="Image of ${name}">
         <h2 class="card__brand">${brand}</h2>
         <h3 class="card__name">${name}</h3>
       </a>
-      <button class="quick-view" data-id=${product.Id}>Quick View</button>
+      <button class="quick-view" data-id=${event.Id}>Quick View</button>
     </li>`;
 }
 
-export default class ProductList {
+export default class eventList {
     constructor(category, dataSource, listElement, query) {
       // You passed in this information to make the class as reusable as possible.
       // Being able to define these things when you use the class will make it very flexible
@@ -66,8 +66,8 @@ export default class ProductList {
         const qViewBtn = e.target.closest('.quick-view');
         if (!qViewBtn) return;
 
-        const card = qViewBtn.closest('.product-card');
-        const productId = qViewBtn.dataset.id;
+        const card = qViewBtn.closest('.event-card');
+        const eventId = qViewBtn.dataset.id;
 
         const existingModal = card.querySelector('.quick-view-modal');
         if (existingModal) existingModal.remove();
@@ -77,13 +77,13 @@ export default class ProductList {
         modal.innerHTML = `
           <div class="modal-content">
             <span class="close">&times;</span>
-            <div class="modal-body">Loading product details...</div>
+            <div class="modal-body">Loading event details...</div>
           </div>
         `;
         card.appendChild(modal);
 
-        const product = await this.dataSource.findProductById(productId);
-        modal.querySelector('.modal-body').innerHTML = renderProductDetailsHTML(product);
+        const event = await this.dataSource.findeventById(eventId);
+        modal.querySelector('.modal-body').innerHTML = rendereventDetailsHTML(event);
 
         modal.classList.add('show'); 
 
@@ -92,7 +92,7 @@ export default class ProductList {
           setTimeout(() => modal.remove(), 300);
         });
         modal.querySelector('#addToCartModal').addEventListener('click', async () => {
-          await addToCart(productId);
+          await addToCart(eventId);
         });
       });
 
@@ -115,17 +115,17 @@ export default class ProductList {
         });
       }
 
-      async function addToCart(productId) {
-        const productData = new ProductData(); 
-        const productDetails = new ProductDetails(productId, productData);
-        productDetails.addProductToCart();
+      async function addToCart(eventId) {
+        const eventData = new eventData(); 
+        const eventDetails = new eventDetails(eventId, eventData);
+        eventDetails.addeventToCart();
       }
     }
 
     renderList(list) {
       if (!this.listElement) return;
       renderListWithTemplate(
-        productCardTemplate, // your top-level template function
+        eventCardTemplate, // your top-level template function
         this.listElement,    // where to render
         list,            // data
         'afterbegin',        // position (default is fine)
