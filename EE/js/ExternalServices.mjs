@@ -18,8 +18,6 @@ export default class ProductData {
     const baseUrl = 'https://app.ticketmaster.com/discovery/v1/events.json';
     const ticketmasterURL = '';
 
-    https://app.ticketmaster.com/discovery/v2/events.json?apikey=HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq&city=Edinburgh&segmentId=KZFzniwnSyZfZ7v7nJ
-
     // Map your categories to segment IDs or keywords
     const categoryMap = {
       music: 'KZFzniwnSyZfZ7v7nJ',
