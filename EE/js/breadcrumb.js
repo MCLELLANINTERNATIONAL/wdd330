@@ -1,89 +1,105 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const crumb = document.getElementById('breadcrumbs');
-  if (!crumb) return;
+    const crumb = document.getElementById('breadcrumbs');
+    if (!crumb) return;
 
-  const path = window.location.pathname;
-  const params = new URLSearchParams(location.search);
+    // ===== get Home URL from your nav (e.g., "../index.html") and resolve it
+    const navHomeLink =
+        document.querySelector('nav a[title="index"], nav a[href$="index.html"]');
 
-  // Root home only
-  const isHome = /^(?:\/|\/index\.html)$/.test(path);
+    const HOME_URL = navHomeLink
+        ? new URL(navHomeLink.getAttribute('href'), location.href).href
+        : new URL('../index.html', location.href).href; // fallback
 
-  if (isHome) {
-    crumb.style.display = 'none';
-    return;
-  }
+    // Consider both "/path/" and "/path/index.html" as Home
+    const isHome = (() => {
+        const home = new URL(HOME_URL);
+        const here = new URL(location.href);
+        const norm = (u) => u.pathname.replace(/index\.html$/i, '');
+        return norm(here) === norm(home);
+    })();
 
-  // helpers
-  const getCategoryFromParam = () =>
-    params.get('category')?.charAt(0).toUpperCase() +
-      params.get('category')?.slice(1) || null;
-  const getCategoryFromTitle = () => {
-    const h2 = document.querySelector('.product-detail h2');
-    if (!h2) return 'Product';
+    const path = window.location.pathname;
+    const params = new URLSearchParams(location.search);
 
-    const text = h2.textContent.toLowerCase();
-    const keywords = ['music', 'theatre', 'cinema', 'sport'];
+    // Root home only
+    if (isHome) {
+        crumb.style.display = 'none';
+        return;
+    }
 
-    // Look for the first keyword in the h2 text
-    const match = keywords.find((word) => text.includes(word));
+    // helpers
+    const getCategoryFromParam = () =>
+        params.get('category')
+            ? params.get('category').charAt(0).toUpperCase() + params.get('category').slice(1)
+            : null;
 
-    return match ? match.charAt(0).toUpperCase() + match.slice(1) : 'Product';
-  };
-  const getCategoryFromList = () =>
-    document.querySelector('.product-list')?.dataset?.category || null;
+    const getCategoryFromTitle = () => {
+        const h2 = document.querySelector('.product-detail h2');
+        if (!h2) return 'Product';
 
-  const rememberCategory = (cat) => {
-    if (cat) localStorage.setItem('last-category', cat);
-  };
-  const recallCategory = () => localStorage.getItem('last-category');
+        const text = h2.textContent.toLowerCase();
+        const keywords = ['music', 'theatre', 'cinema', 'sport'];
 
-  const setCrumb = (html) => {
-    crumb.innerHTML = `<a href="/index.html">Home</a> &gt; ${html}`;
-    crumb.style.display = '';
-  };
+        // Look for the first keyword in the h2 text
+        const match = keywords.find((word) => text.includes(word));
 
-  const isDetail = path.includes('/product_pages/');
-  const isCart = path.includes('/cart/');
-  const isList = !!document.querySelector('.product-list');
-
-  if (isCart) {
-    const category = 'Cart';
-    setCrumb(`<span>${category}</span>`);
-    return;
-  }
-
-  if (isDetail) {
-    const category = recallCategory() || 'Products';
-
-    setCrumb(`<span>${category}</span>`);
-    return;
-  }
-
-  if (isList) {
-    // product list: "Category -> (N items)"
-    const listEl = document.querySelector('.product-list');
-
-    const update = () => {
-      const category =
-        getCategoryFromParam() ||
-        getCategoryFromTitle() ||
-        getCategoryFromList() ||
-        'Products';
-
-      rememberCategory(category);
-
-      const count = listEl.querySelectorAll('.product-card').length;
-      setCrumb(`<span>${category}</span> &gt; <span>(${count} items)</span>`);
+        return match ? match.charAt(0).toUpperCase() + match.slice(1) : 'Product';
     };
 
-    // Products may render async; observe for when cards appear
-    const observer = new MutationObserver(update);
-    observer.observe(listEl, { childList: true });
+    const getCategoryFromList = () =>
+        document.querySelector('.product-list')?.dataset?.category || null;
 
-    update(); // initial
-    return;
-  }
+    const rememberCategory = (cat) => {
+        if (cat) localStorage.setItem('last-category', cat);
+    };
+    const recallCategory = () => localStorage.getItem('last-category');
 
-  // Other pages: hide by default
-  crumb.style.display = 'none';
+    const setCrumb = (html) => {
+        crumb.innerHTML = `<a href="${HOME_URL}">Home</a> &gt; ${html}`;
+        crumb.style.display = '';
+    };
+
+    const isDetail = path.includes('/product_pages/');
+    const isCart = path.includes('/cart/');
+    const isList = !!document.querySelector('.product-list');
+
+    if (isCart) {
+        const category = 'Cart';
+        setCrumb(`<span>${category}</span>`);
+        return;
+    }
+
+    if (isDetail) {
+        const category = recallCategory() || 'Products';
+        setCrumb(`<span>${category}</span>`);
+        return;
+    }
+
+    if (isList) {
+        // product list: "Category -> (N items)"
+        const listEl = document.querySelector('.product-list');
+
+        const update = () => {
+            const category =
+                getCategoryFromParam() ||
+                getCategoryFromTitle() ||
+                getCategoryFromList() ||
+                'Products';
+
+            rememberCategory(category);
+
+            const count = listEl.querySelectorAll('.product-card').length;
+            setCrumb(`<span>${category}</span> &gt; <span>(${count} items)</span>`);
+        };
+
+        // Products may render async; observe for when cards appear
+        const observer = new MutationObserver(update);
+        observer.observe(listEl, { childList: true });
+
+        update(); // initial
+        return;
+    }
+
+    // Other pages: hide by default
+    crumb.style.display = 'none';
 });
