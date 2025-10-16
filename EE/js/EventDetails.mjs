@@ -4,24 +4,24 @@ import { getLocalStorage, setLocalStorage, updateCartBadge, bounceCartIcon, getP
 
 // ---- helpers ----
 function priceLine(ev) {
-  const p = ev?.price || {};
-  if (p.type === 'free') return 'Free';
-  if (p.min != null && p.max != null) {
-    if (p.min === p.max) return `${p.min} ${p.currency || ''}`.trim();
-    return `${p.min}–${p.max} ${p.currency || ''}`.trim();
-  }
-  if (p.min != null) return `From ${p.min} ${p.currency || ''}`.trim();
-  return '';
+    const p = ev?.price || {};
+    if (p.type === 'free') return 'Free';
+    if (p.min != null && p.max != null) {
+        if (p.min === p.max) return `${p.min} ${p.currency || ''}`.trim();
+        return `${p.min}–${p.max} ${p.currency || ''}`.trim();
+    }
+    if (p.min != null) return `From ${p.min} ${p.currency || ''}`.trim();
+    return '';
 }
 
 function venueBlock(ev) {
-  const v = ev?.venue || {};
-  const addrParts = [v.address, v.city, v.state, v.postalCode, v.country].filter(Boolean);
-  const addr = addrParts.join(', ');
-  const map = v.mapUrl ? `<a href='${v.mapUrl}' target='_blank' rel='noopener'>View map</a>` : '';
-  const dir = v.directionsUrl ? `<a href='${v.directionsUrl}' target='_blank' rel='noopener'>Directions</a>` : '';
-  const links = [map, dir].filter(Boolean).join(' · ');
-  return `
+    const v = ev?.venue || {};
+    const addrParts = [v.address, v.city, v.state, v.postalCode, v.country].filter(Boolean);
+    const addr = addrParts.join(', ');
+    const map = v.mapUrl ? `<a href='${v.mapUrl}' target='_blank' rel='noopener'>View map</a>` : '';
+    const dir = v.directionsUrl ? `<a href='${v.directionsUrl}' target='_blank' rel='noopener'>Directions</a>` : '';
+    const links = [map, dir].filter(Boolean).join(' · ');
+    return `
     <div class='pd-venue'>
       <h4>Venue</h4>
       <p><strong>${v.name || ''}</strong></p>
@@ -32,14 +32,14 @@ function venueBlock(ev) {
 }
 
 function detailsHTML(ev) {
-  const imgHTML = ev.image?.url
-    ? `<img id='eventImage' class='pd-img' src='${ev.image.url}' alt='${ev.name}' />`
-    : '';
-  const classLine = classificationLine(ev);
-  const whenLine  = ev.start ? formatWhen(ev) : '';
-  const price     = priceLine(ev);
+    const imgHTML = ev.image?.url
+        ? `<img id='eventImage' class='pd-img' src='${ev.image.url}' alt='${ev.name}' />`
+        : '';
+    const classLine = classificationLine(ev);
+    const whenLine = ev.start ? formatWhen(ev) : '';
+    const price = priceLine(ev);
 
-  return `
+    return `
     <article class='pd-card'>
       <div class='event-media'>
         ${imgHTML}
@@ -61,62 +61,62 @@ function detailsHTML(ev) {
 }
 
 export default class eventDetails {
-  constructor() {
-    this.event = null;
-    this.src = null;
-    this.id  = null;
-  }
-
-  async init() {
-    // Expect event_pages.html?src={ticketmaster|eventbrite}&id={EVENT_ID}
-    this.src = getParam('src');
-    this.id  = getParam('id');
-
-    const mount = document.querySelector('#pd-root');
-    if (!mount) {
-      console.error('eventDetails: #pd-root not found');
-      return;
+    constructor() {
+        this.event = null;
+        this.src = null;
+        this.id = null;
     }
 
-    if (!this.src || !this.id) {
-      mount.innerHTML = `<p class='error'>Missing event reference. Expected ?src=…&id=…</p>`;
-      updateCartBadge();
-      return;
+    async init() {
+        // Expect event_pages.html?src={ticketmaster|eventbrite}&id={EVENT_ID}
+        this.src = getParam('src');
+        this.id = getParam('id');
+
+        const mount = document.querySelector('#pd-root');
+        if (!mount) {
+            console.error('eventDetails: #pd-root not found');
+            return;
+        }
+
+        if (!this.src || !this.id) {
+            mount.innerHTML = `<p class='error'>Missing event reference. Expected ?src=…&id=…</p>`;
+            updateCartBadge();
+            return;
+        }
+
+        try {
+            this.event = await fetchEventBySourceAndId(this.src, this.id);
+            mount.innerHTML = detailsHTML(this.event);
+
+            // wire Add to cart
+            const btn = document.getElementById('addToCart');
+            btn?.addEventListener('click', () => this.addeventToCart());
+
+            // ensure badge correct on load
+            updateCartBadge();
+        } catch (e) {
+            mount.innerHTML = `<p class='error'>Could not load event: ${e.message}</p>`;
+            updateCartBadge();
+        }
     }
 
-    try {
-      this.event = await fetchEventBySourceAndId(this.src, this.id);
-      mount.innerHTML = detailsHTML(this.event);
-
-      // wire Add to cart
-      const btn = document.getElementById('addToCart');
-      btn?.addEventListener('click', () => this.addeventToCart());
-
-      // ensure badge correct on load
-      updateCartBadge();
-    } catch (e) {
-      mount.innerHTML = `<p class='error'>Could not load event: ${e.message}</p>`;
-      updateCartBadge();
+    addeventToCart() {
+        // Reuse your existing localStorage utils if you still need them elsewhere,
+        // but for events we’ll use the unified cart in events.js so everything stays consistent.
+        addToCart(this.event, 1);
+        updateCartBadge();
+        bounceCartIcon();
     }
-  }
-
-  addeventToCart() {
-    // Reuse your existing localStorage utils if you still need them elsewhere,
-    // but for events we’ll use the unified cart in events.js so everything stays consistent.
-    addToCart(this.event, 1);
-    updateCartBadge();
-    bounceCartIcon();
-  }
 }
 
 // Optional: card HTML for listings that link to event_pages.html
 export function rendereventDetailsHTML(ev) {
-  const price = priceLine(ev);
-  const when  = ev.start ? formatWhen(ev) : '';
-  const classLine = classificationLine(ev);
-  const href = `event_pages.html?src=${encodeURIComponent(ev.source)}&id=${encodeURIComponent(ev.id)}`;
+    const price = priceLine(ev);
+    const when = ev.start ? formatWhen(ev) : '';
+    const classLine = classificationLine(ev);
+    const href = `event_pages.html?src=${encodeURIComponent(ev.source)}&id=${encodeURIComponent(ev.id)}`;
 
-  return `
+    return `
     <a href='${href}' class='event-card' aria-label='${ev.name}'>
       <article>
         <div class='thumb'>
