@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const crumb = document.getElementById('breadcrumbs');
     if (!crumb) return;
 
-    // ===== get Home URL from your nav (e.g., "../index.html") and resolve it
+    // ===== get Home URL from your nav (e.g., '../index.html') and resolve it
     const navHomeLink =
         document.querySelector('nav a[title="index"], nav a[href$="index.html"]');
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ? new URL(navHomeLink.getAttribute('href'), location.href).href
         : new URL('../index.html', location.href).href; // fallback
 
-    // Consider both "/path/" and "/path/index.html" as Home
+    // Consider both '/path/' and '/path/index.html' as Home
     const isHome = (() => {
         const home = new URL(HOME_URL);
         const here = new URL(location.href);
@@ -34,24 +34,18 @@ document.addEventListener('DOMContentLoaded', () => {
             : null;
 
     const getCategoryFromTitle = () => {
-        const h2 = document.querySelector('.product-detail h2');
-        if (!h2) return 'Product';
-
+        const h2 = document.querySelector('.event-detail h2');
+        if (!h2) return 'Events';
         const text = h2.textContent.toLowerCase();
-        const keywords = ['music', 'theatre', 'cinema', 'sport'];
-
-        // Look for the first keyword in the h2 text
+        const keywords = ['Music', 'Theatre', 'Cinema', 'Sport'];
         const match = keywords.find((word) => text.includes(word));
-
-        return match ? match.charAt(0).toUpperCase() + match.slice(1) : 'Product';
+        return match ? match.charAt(0).toUpperCase() + match.slice(1) : 'event';
     };
 
     const getCategoryFromList = () =>
-        document.querySelector('.product-list')?.dataset?.category || null;
+        document.querySelector('.event-list')?.dataset?.category || null;
 
-    const rememberCategory = (cat) => {
-        if (cat) localStorage.setItem('last-category', cat);
-    };
+    const rememberCategory = (cat) => { if (cat) localStorage.setItem('last-category', cat); };
     const recallCategory = () => localStorage.getItem('last-category');
 
     const setCrumb = (html) => {
@@ -59,40 +53,53 @@ document.addEventListener('DOMContentLoaded', () => {
         crumb.style.display = '';
     };
 
-    const isDetail = path.includes('/product_pages/');
+    const isDetail = path.includes('/event_pages/');
     const isCart = path.includes('/cart/');
-    const isList = !!document.querySelector('.product-list');
+    const isList = !!document.querySelector('.event-list');
+    const isCheckout = path.includes('/checkout/');
+    const checkoutIndexUrl = new URL('../checkout/index.html', location.href).href;
 
+    // Cart
     if (isCart) {
-        const category = 'Cart';
-        setCrumb(`<span>${category}</span>`);
+        setCrumb(`<span>Cart</span>`);
         return;
     }
 
+    // ✅ Checkout (handle BEFORE detail/list)
+    if (isCheckout) {
+        const isSuccess = /\/success\.html$/i.test(path) || !!document.querySelector('.success-div');
+        if (isSuccess) {
+            setCrumb(`<a href="${checkoutIndexUrl}">Checkout</a> &gt; <span>Success</span>`);
+        } else {
+            setCrumb(`<span>Checkout</span>`);
+        }
+        return;
+    }
+
+    // Event detail
     if (isDetail) {
-        const category = recallCategory() || 'Products';
+        const category = recallCategory() || 'events';
         setCrumb(`<span>${category}</span>`);
         return;
     }
 
+    // Event list
     if (isList) {
-        // product list: "Category -> (N items)"
-        const listEl = document.querySelector('.product-list');
-
+        const listEl = document.querySelector('.event-list');
         const update = () => {
             const category =
                 getCategoryFromParam() ||
                 getCategoryFromTitle() ||
                 getCategoryFromList() ||
-                'Products';
+                'events';
 
             rememberCategory(category);
 
-            const count = listEl.querySelectorAll('.product-card').length;
+            const count = listEl.querySelectorAll('.event-card').length;
             setCrumb(`<span>${category}</span> &gt; <span>(${count} items)</span>`);
         };
 
-        // Products may render async; observe for when cards appear
+        // events may render async; observe for when cards appear
         const observer = new MutationObserver(update);
         observer.observe(listEl, { childList: true });
 
