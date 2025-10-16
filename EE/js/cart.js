@@ -27,19 +27,17 @@ function showRemoveMessage(event, onChoice) {
 
   opts.innerHTML = '';
 
-  // Prevent background scrolling/interactions
   document.body.style.overflow = 'hidden';
   overlay.classList.remove('hide');
   dialog.classList.remove('hide');
   dialogTitle.textContent = 'Remove Item';
   let initialFocus = null;
 
-  // Case 1: only one
   if (event.quantity === 1) {
     msg.textContent = `Are you sure you want to remove ${event.Name}?`;
     opts.innerHTML = `
-      <button id='confirmRemove'>Remove</button>
-      <button id='cancelRemove'>Cancel</button>
+      <button id="confirmRemove">Remove</button>
+      <button id="cancelRemove">Cancel</button>
     `;
     initialFocus = document.getElementById('confirmRemove');
     document.getElementById('confirmRemove').onclick = () => {
@@ -50,15 +48,12 @@ function showRemoveMessage(event, onChoice) {
       cleanup();
       onChoice({ type: 'cancel' });
     };
-  }
-
-  // Case 2: exactly 2
-  else if (event.quantity === 2) {
+  } else if (event.quantity === 2) {
     msg.textContent = `You have 2 of ${event.Name}. Do you want to remove only one, both, or cancel?`;
     opts.innerHTML = `
-      <button id='removeOne'>Remove One</button>
-      <button id='removeAll'>Remove Both</button>
-      <button id='cancelRemove'>Cancel</button>
+      <button id="removeOne">Remove One</button>
+      <button id="removeAll">Remove Both</button>
+      <button id="cancelRemove">Cancel</button>
     `;
     initialFocus = document.getElementById('removeOne');
     document.getElementById('removeOne').onclick = () => {
@@ -73,16 +68,13 @@ function showRemoveMessage(event, onChoice) {
       cleanup();
       onChoice({ type: 'cancel' });
     };
-  }
-
-  // Case 3: more than 2
-  else {
+  } else {
     msg.textContent = `You have ${event.quantity} of ${event.Name}. How many would you like to remove?`;
     opts.innerHTML = `
-      <input id='removeCount' type='number' min='1' max='${event.quantity}' value='1'>
-      <button id='confirmRemove'>Remove</button>
-      <button id='removeAll'>Remove All</button>
-      <button id='cancelRemove'>Cancel</button>
+      <input id="removeCount" type="number" min="1" max="${event.quantity}" value="1">
+      <button id="confirmRemove">Remove</button>
+      <button id="removeAll">Remove All</button>
+      <button id="cancelRemove">Cancel</button>
     `;
     initialFocus = document.getElementById('removeCount');
     const input = document.getElementById('removeCount');
@@ -107,7 +99,6 @@ function showRemoveMessage(event, onChoice) {
 
   setTimeout(() => initialFocus && initialFocus.focus(), 100);
 
-  // Trap focus inside dialog
   dialog.onkeydown = function (e) {
     if (e.key === 'Tab') {
       e.preventDefault();
@@ -141,28 +132,23 @@ function showRemoveMessage(event, onChoice) {
 function updateCartFooter(cart) {
   const footerEl = document.getElementById('cart-footer');
   const totalEl = document.getElementById('cart-total');
-  const discountEl = document.getElementById('cart-discount');
   const finalEl = document.getElementById('cart-final');
-  datasource = getLocalStorage('so-cart');
 
-  if (!footerEl || !totalEl || !discountEl || !finalEl) return;
+  if (!footerEl || !totalEl || !finalEl) return;
 
   if (!Array.isArray(cart) || cart.length === 0) {
     footerEl.classList.add('hide');
     totalEl.textContent = '$0.00';
-    discountEl.textContent = '$0.00';
     finalEl.textContent = '$0.00';
     return;
   }
 
   const total = getCartTotal(cart);
-  const discountTotal = getCartDiscount(cart); // sum of per-item discounts (10%)
+  const discountTotal = getCartDiscount(cart);
   const finalTotal = Math.max(total - discountTotal, 0);
 
   totalEl.textContent = formatCurrency(total);
-  discountEl.textContent = formatCurrency(discountTotal);
   finalEl.textContent = formatCurrency(finalTotal);
-
   footerEl.classList.remove('hide');
 }
 
@@ -194,47 +180,38 @@ function coercePrice(value) {
 
 function formatCurrency(amount) {
   try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(Number(amount));
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+      .format(Number(amount));
   } catch {
-    return `$${amount.toFixed(2)}`;
+    return `$${Number(amount).toFixed(2)}`;
   }
 }
 
 function getUnitPricing(item) {
   const final = coercePrice(
     item?._finalPrice ??
-      item?.FinalPrice ??
-      item?.price ??
-      item?.Price ??
-      item?.ListPrice ??
-      0,
+    item?.FinalPrice ??
+    item?.price ??
+    item?.Price ??
+    item?.ListPrice ??
+    0
   );
 
   let pct = Number(item?._discountPct);
   if (!Number.isFinite(pct)) {
-    // Fallback: derive from a compare/original price
     const compareGuess = coercePrice(
       item?._comparePrice ??
-        item?.Price ??
-        item?.ListPrice ??
-        item?.MSRP ??
-        item?.SuggestedRetailPrice ??
-        0,
+      item?.Price ??
+      item?.ListPrice ??
+      item?.MSRP ??
+      item?.SuggestedRetailPrice ??
+      0
     );
-    if (compareGuess > final) {
-      pct = Math.round(((compareGuess - final) / compareGuess) * 100);
-    } else {
-      pct = 0;
-    }
+    pct = compareGuess > final ? Math.round(((compareGuess - final) / compareGuess) * 100) : 0;
   }
 
-  // Compute compare and save from final and pct
   const compare = pct > 0 ? final / (1 - pct / 100) : final;
   const save = Math.max(compare - final, 0);
-
   return { final, compare, pct, save };
 }
 
@@ -272,22 +249,13 @@ function annotateLineDiscounts(cart) {
   });
 }
 
-element.addEventListener('click', (e) => {
-  // increase button
+element?.addEventListener('click', (e) => {
   const increaseBtn = e.target.closest('.increase-quantity');
-  if (increaseBtn) {
-    handleIncrease(increaseBtn.dataset.id);
-    return;
-  }
+  if (increaseBtn) { handleIncrease(increaseBtn.dataset.id); return; }
 
-  // decrease button
   const decreaseBtn = e.target.closest('.decrease-quantity');
-  if (decreaseBtn) {
-    handleDecrease(decreaseBtn.dataset.id);
-    return;
-  }
+  if (decreaseBtn) { handleDecrease(decreaseBtn.dataset.id); return; }
 
-  // remove button
   const removeBtn = e.target.closest('.cart-remove');
   if (removeBtn) {
     const id = removeBtn.dataset.id;
@@ -296,14 +264,11 @@ element.addEventListener('click', (e) => {
 
     showRemoveMessage(event, (choice) => {
       if (choice.type === 'removeOne') event.quantity -= 1;
-      else if (choice.type === 'removeAll')
-        datasource = datasource.filter((i) => i.Id !== id);
+      else if (choice.type === 'removeAll') datasource = datasource.filter((i) => i.Id !== id);
       else if (choice.type === 'removeSome') {
         event.quantity -= choice.count;
-        if (event.quantity <= 0)
-          datasource = datasource.filter((i) => i.Id !== id);
+        if (event.quantity <= 0) datasource = datasource.filter((i) => i.Id !== id);
       }
-
       setLocalStorage('so-cart', datasource);
       shopCart.renderList(datasource);
       annotateLineDiscounts(datasource);
@@ -338,8 +303,8 @@ function handleDecrease(eventId) {
   updateCartBadge();
 }
 
-document.getElementById('clear-cart-btn').addEventListener('click', clearCart);
-document.getElementById('checkout-btn').addEventListener('click', checkOutCart);
+document.getElementById('clear-cart-btn')?.addEventListener('click', clearCart);
+document.getElementById('checkout-btn')?.addEventListener('click', checkOutCart);
 
 function clearCart() {
   setLocalStorage('so-cart', []);
@@ -349,23 +314,17 @@ function clearCart() {
 }
 
 function checkOutCart() {
-  // const finalEle = document.getElementById('cart-final');
-  // const rawText = finalEle ? finalEle.textContent.replace(/[^0-9.]/g, '') : '0';
-  // const total = Number(rawText);
-  // setLocalStorage('total-price', total);
   setLocalStorage(
     'num-items',
-    getLocalStorage('so-cart').reduce(
-      (sum, item) => sum + (item.quantity || 1),
-      0,
-    ),
+    (getLocalStorage('so-cart') || []).reduce((sum, item) => sum + (item.quantity || 1), 0)
   );
-  window.open('../checkout/index.html');
+  window.location.href = '../checkout/index.html';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   datasource = getLocalStorage('so-cart') || [];
   annotateLineDiscounts(datasource);
   updateCartFooter(datasource);
-  updateCartBadge(); // ensure correct on initial load
+  updateCartBadge();
 });
+
