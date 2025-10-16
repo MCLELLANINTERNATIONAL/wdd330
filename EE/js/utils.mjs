@@ -1,120 +1,95 @@
-// utils.mjs
-export function qs(selector, parent = document) {
-  return parent.querySelector(selector);
-}
+// utils.mjs — robust partial loader for /public/partials + fixes dates after inject
 
-export function getLocalStorage(key) {
-  try {
-    const data = JSON.parse(localStorage.getItem(key));
-    return key === 'so-cart' ? (Array.isArray(data) ? data : []) : data;
-  } catch {
-    return key === 'so-cart' ? [] : null;
-  }
-}
-
-export function setLocalStorage(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
-export function getParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
-
-export async function loadTemplate(path) {
-  const res = await fetch(path);
+export async function loadTemplate(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
   return await res.text();
 }
 
-function basePrefixFromPathname() {
-  // e.g.
-  // /EE/index.html                -> prefix ''
-  // /EE/cart/index.html           -> prefix '../'
-  // /EE/event_listing/music.html  -> prefix '../'
-  const parts = location.pathname.replace(/\/$/, '').split('/');
-  // remove last part if it looks like a file (has dot)
-  const isFile = /\./.test(parts[parts.length - 1]);
-  const folders = isFile ? parts.slice(0, -1) : parts;
-  // folders like ["", "EE"] -> depth=1 (root of app)
-  // we want "../" for each folder after the app root
-  const appRootIndex = folders.indexOf('EE'); // adjust if folder name changes
-  const depth = appRootIndex >= 0 ? Math.max(0, folders.length - (appRootIndex + 1) - 0) : Math.max(0, folders.length - 2);
-  return '../'.repeat(depth);
+// Try multiple depths and two bases: "partials/" and "public/partials/"
+async function findPartial(relFile) {
+  const depths = ["", "../", "../../", "../../../"];
+  const bases = ["partials/", "public/partials/"];
+
+  for (const depth of depths) {
+    for (const base of bases) {
+      const url = depth + base + relFile;
+      try {
+        const html = await loadTemplate(url);
+        // IMPORTANT: return depth separately from base
+        // We will only use `depth` to rebase links (never the base folder path).
+        return { html, depthPrefix: depth, baseUsed: base };
+      } catch (_) {
+        // keep trying
+      }
+    }
+  }
+  throw new Error(`Could not load ${relFile} from partials or public/partials at any depth`);
 }
 
-function rebaseDomLinks(rootElem, prefix) {
-  const sel = ['a[data-rel="a"]', 'img[data-rel="img"]', 'link[data-rel="link"]'];
-  rootElem.querySelectorAll(sel.join(',')).forEach((el) => {
-    const attr = el.tagName === 'A' ? 'href' : 'src';
+// Rebase only *relative* URLs using the depth prefix, NOT the partials folder path.
+function rebaseRelativeUrls(rootElem, depthPrefix) {
+  rootElem.querySelectorAll('a[href], img[src], link[href], script[src]').forEach(el => {
+    const attr = el.tagName === "IMG" || el.tagName === "SCRIPT" ? "src" : "href";
     const val = el.getAttribute(attr);
     if (!val) return;
-    // Skip absolute/ protocol links
-    if (/^(https?:)?\/\//i.test(val) || val.startsWith('/')) return;
-    el.setAttribute(attr, prefix + val);
+
+    // Skip absolute or root-absolute URLs
+    if (/^(?:https?:)?\/\//i.test(val) || val.startsWith("/")) return;
+
+    // Skip in-page anchors and mailto/tel
+    if (val.startsWith("#") || val.startsWith("mailto:") || val.startsWith("tel:")) return;
+
+    // Avoid double-prefixing
+    if (val.startsWith("./") || val.startsWith("../")) {
+      // already relative to the page; optionally leave it alone
+      return;
+    }
+
+    // Rebase with depth only (e.g., "../"), NOT "public/partials/"
+    el.setAttribute(attr, depthPrefix + val);
   });
+}
+
+// After footer inject, ensure current year + last modified are set
+function applyDates() {
+  try {
+    const currentYearElement = document.getElementById('currentyear');
+    if (currentYearElement) currentYearElement.textContent = new Date().getFullYear();
+
+    const lastModifiedElement = document.getElementById('lastModified');
+    if (lastModifiedElement) lastModifiedElement.textContent = `Last Modified: ${document.lastModified}`;
+  } catch { }
 }
 
 export async function loadHeaderFooter() {
-  const prefix = basePrefixFromPathname();
-
-  // Load header
   const headerHost = document.querySelector('#main-head');
-  if (headerHost) {
-    const headerHtml = await loadTemplate(`${prefix}partials/header.html`);
-    const frag = document.createElement('div');
-    frag.innerHTML = headerHtml;
-    rebaseDomLinks(frag, prefix);
-    headerHost.innerHTML = '';
-    headerHost.append(...frag.childNodes);
-    updateCartBadge();
-  }
-
-  // Load footer
   const footerHost = document.querySelector('#main-foot');
+
+  // Header
+  if (headerHost) {
+    const { html, depthPrefix } = await findPartial("header.html");
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = html;
+    rebaseRelativeUrls(wrapper, depthPrefix);
+    headerHost.innerHTML = "";
+    headerHost.append(...wrapper.childNodes);
+
+    // If you have a badge updater, call it
+    try { typeof updateCartBadge === "function" && updateCartBadge(); } catch { }
+  }
+
+  // Footer
   if (footerHost) {
-    const footerHtml = await loadTemplate(`${prefix}partials/footer.html`);
-    const frag = document.createElement('div');
-    frag.innerHTML = footerHtml;
-    rebaseDomLinks(frag, prefix);
-    footerHost.innerHTML = '';
-    footerHost.append(...frag.childNodes);
+    const { html, depthPrefix } = await findPartial("footer.html");
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = html;
+    rebaseRelativeUrls(wrapper, depthPrefix);
+    footerHost.innerHTML = "";
+    footerHost.append(...wrapper.childNodes);
+
+    // Now that #lastModified exists, set it
+    applyDates();
   }
 }
 
-export function updateCartBadge() {
-  const cart = getLocalStorage('so-cart') || [];
-  const count = cart.reduce((sum, it) => sum + (it.quantity || 1), 0);
-
-  const badgeById = document.getElementById('cart-badge');
-  const badgeByClass = document.querySelector('.cart-count');
-
-  [badgeById, badgeByClass].forEach((el) => {
-    if (!el) return;
-    el.textContent = count;
-    el.classList.toggle('hide', count === 0);
-  });
-}
-
-export function bounceCartIcon() {
-  const cartIcon = document.querySelector('.cart-btn');
-  if (!cartIcon) return;
-  cartIcon.classList.remove('cart-bounce');
-  void cartIcon.offsetWidth;
-  cartIcon.classList.add('cart-bounce');
-}
-
-export function alertMessage(message, scroll = true) {
-  const alert = document.createElement('div');
-  const main = document.querySelector('main');
-  alert.classList.add('alert');
-  alert.innerHTML = `<h2>${message}</h2><button id="alert-close">&times;</button>`;
-  alert.addEventListener('click', (e) => {
-    if (e.target.id === 'alert-close') main.removeChild(alert);
-  });
-  main.prepend(alert);
-  if (scroll) window.scrollTo(0, 0);
-}
-
-export function removeAllAlerts() {
-  document.querySelectorAll('.alert').forEach((a) => a.remove());
-}
