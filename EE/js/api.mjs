@@ -1,33 +1,37 @@
-// =====================================================
+// js/api.js
+// ========================================================
 //  Edinburgh Entertainment — Unified API + Cart Module
-//  Handles Ticketmaster + Eventbrite + Local Cart storage
+//  Ticketmaster + Eventbrite + Local Cart storage
 // ========================================================
 
-// ---- API Keys / Tokens ----
-// 👇 Insert your real keys between the quotes
-const TM_KEY = 'HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq';      // Ticketmaster API key
-const EB_TOKEN = '3JHCKH7IX3J5SBA63XCU';    // Eventbrite personal OAuth token (Bearer)
+// ---- API Keys / Tokens (INSERT YOURS) ----
+const TM_KEY = 'HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq';   // e.g. 'AbCd123...'
+const EB_TOKEN = '3JHCKH7IX3J5SBA63XCU';   // OAuth token used as Bearer
 
 // ---- Endpoints ----
 const TM_API = 'https://app.ticketmaster.com/discovery/v2';
 const EB_API = 'https://www.eventbriteapi.com/v3';
 
-// ---- CORS Proxy (needed for GitHub Pages / static sites) ----
+// ---- CORS Proxy (useful for static hosting like GitHub Pages) ----
 const CORS_PROXY = 'https://corsproxy.io/?';
 
 // ---- Utilities ----
 const nowISO = () => new Date().toISOString();
 const toNum = (x) => (x == null ? null : Number(x));
 const clean = (s) => (typeof s === 'string' ? s.trim() : '');
+const ensureHttps = (u) => (typeof u === 'string' ? u.replace(/^http:\/\//i, 'https://') : u);
+
 const mapUrl = (lat, lon, label = '') =>
   lat && lon
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lon} ${label}`)}`
     : '';
+
 const directionsUrl = (lat, lon) =>
   lat && lon
     ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`
     : '';
 
+// Centralized fetch with readable errors
 async function fetchJson(url, opts = {}) {
   const res = await fetch(url, opts);
   if (!res.ok) {
@@ -37,6 +41,7 @@ async function fetchJson(url, opts = {}) {
   return res.json();
 }
 
+// URL builder
 function buildUrl(base, params) {
   const u = new URL(base);
   Object.entries(params || {}).forEach(([k, v]) => {
@@ -54,21 +59,46 @@ const TM_CATEGORY_SEGMENT = {
   sport: 'Sports',
 };
 
-function pickTMImage(images = []) {
-  const pref = images.find(i => i.ratio === '3_2') || images.find(i => i.ratio === '16_9');
-  return pref || images[0] || null;
+// pick best image from a TM "images" array
+function pickFromImages(images = []) {
+  const imgs = images.map((i) => ({ ...i, url: ensureHttps(i.url) }));
+  const best =
+    imgs.find((i) => i.ratio === '3_2') ||
+    imgs.find((i) => i.ratio === '16_9') ||
+    imgs[0];
+  return best || null;
+}
+
+// fall back to attraction images if event images missing/empty
+function pickTMImage(ev) {
+  // 1) event images
+  const img = pickFromImages(ev?.images || []);
+  if (img) return img;
+
+  // 2) attraction images
+  const attractions = ev?._embedded?.attractions || [];
+  for (const a of attractions) {
+    const ai = pickFromImages(a.images || []);
+    if (ai) return ai;
+  }
+
+  // 3) no image
+  return null;
 }
 
 function normalizeTM(ev, category) {
-  const img = pickTMImage(ev.images);
+  const img = pickTMImage(ev);
   const v = ev?._embedded?.venues?.[0] || {};
   const price = (ev.priceRanges && ev.priceRanges[0]) || {};
   const classSeg = ev.classifications?.[0] || {};
+  const attractions = (ev?._embedded?.attractions || []).map((a) => clean(a.name)).filter(Boolean);
+
   return {
     id: ev.id,
     source: 'ticketmaster',
     category,
-    name: clean(ev.name),
+    name: clean(ev.name), // Event title
+    artists: attractions, // optional: for display if you want artist names
     description: clean(ev.info || ev.pleaseNote || ''),
     classifications: {
       segment: classSeg.segment?.name || '',
@@ -79,7 +109,7 @@ function normalizeTM(ev, category) {
     end: ev.dates?.end?.dateTime || null,
     image: img
       ? { url: img.url, width: toNum(img.width), height: toNum(img.height) }
-      : { url: '', width: null, height: null },
+      : { url: 'images/placeholder.png', width: null, height: null }, // <-- final fallback
     price: {
       type: price.type || '',
       currency: price.currency || '',
@@ -99,7 +129,7 @@ function normalizeTM(ev, category) {
       mapUrl: mapUrl(v.location?.latitude, v.location?.longitude, v.name || ''),
       directionsUrl: directionsUrl(v.location?.latitude, v.location?.longitude),
     },
-    url: ev.url || '',
+    url: ensureHttps(ev.url || ''),
   };
 }
 
@@ -107,7 +137,7 @@ export async function getTicketmasterEvents(category, { size = 100 } = {}) {
   const segmentName = TM_CATEGORY_SEGMENT[category];
   if (!segmentName) return [];
 
-  const url = buildUrl(`${TM_API}/events.json`, {
+  const raw = buildUrl(`${TM_API}/events.json`, {
     apikey: TM_KEY,
     city: 'Edinburgh',
     countryCode: 'GB',
@@ -119,11 +149,12 @@ export async function getTicketmasterEvents(category, { size = 100 } = {}) {
     includeTBD: 'yes',
   });
 
-  // Use proxy for browser CORS safety
-  const proxiedUrl = CORS_PROXY + encodeURIComponent(url);
-  const data = await fetchJson(proxiedUrl, { __label: 'Ticketmaster Events' });
+  // Use proxy for browser CORS safety (static hosting)
+  const url = CORS_PROXY + encodeURIComponent(raw);
+
+  const data = await fetchJson(url, { __label: 'Ticketmaster Events' });
   const events = data._embedded?.events || [];
-  return events.map(e => normalizeTM(e, category));
+  return events.map((e) => normalizeTM(e, category));
 }
 
 // ========================================================
@@ -133,11 +164,13 @@ function normalizeEB(ev) {
   const venue = ev.venue || {};
   const lat = venue.latitude ? Number(venue.latitude) : null;
   const lon = venue.longitude ? Number(venue.longitude) : null;
+
   const ta = ev.ticket_availability || {};
   const minp = ta.minimum_ticket_price || {};
   const maxp = ta.maximum_ticket_price || {};
+
   const logo = ev.logo || {};
-  const imgUrl = logo.original?.url || logo.url || '';
+  const imgUrl = ensureHttps(logo.original?.url || logo.url || 'images/placeholder.png');
 
   return {
     id: String(ev.id),
@@ -172,7 +205,7 @@ function normalizeEB(ev) {
       mapUrl: mapUrl(lat, lon, venue.name || ''),
       directionsUrl: directionsUrl(lat, lon),
     },
-    url: ev.url || '',
+    url: ensureHttps(ev.url || ''),
   };
 }
 
@@ -188,15 +221,15 @@ export async function getEventbriteCinema({ pageSize = 50 } = {}) {
   };
 
   const rawUrl = buildUrl(`${EB_API}/events/search/`, params);
-  const proxiedUrl = CORS_PROXY + encodeURIComponent(rawUrl);
+  const url = CORS_PROXY + encodeURIComponent(rawUrl);
 
-  const data = await fetchJson(proxiedUrl, {
+  const data = await fetchJson(url, {
     __label: 'Eventbrite Events',
     headers: { Authorization: `Bearer ${EB_TOKEN}` },
   });
 
   const events = data.events || [];
-  return events.map(e => normalizeEB(e));
+  return events.map((e) => normalizeEB(e));
 }
 
 // ========================================================
@@ -261,7 +294,7 @@ export function addToCart(eventObj, qty = 1) {
   if (!eventObj?.id) throw new Error('Invalid event for cart');
   const items = getCart();
   const key = `${eventObj.source}:${eventObj.id}`;
-  const idx = items.findIndex(it => it.key === key);
+  const idx = items.findIndex((it) => it.key === key);
 
   if (idx >= 0) {
     items[idx].qty += qty;
@@ -288,7 +321,7 @@ export function addToCart(eventObj, qty = 1) {
 }
 
 export function removeFromCart(key) {
-  const items = getCart().filter(it => it.key !== key);
+  const items = getCart().filter((it) => it.key !== key);
   saveCart(items);
   return items;
 }
@@ -322,3 +355,16 @@ export function classificationLine(ev) {
   const c = ev.classifications || {};
   return [c.segment, c.genre, c.subGenre].filter(Boolean).join(' • ');
 }
+
+export function artistLine(ev) {
+  return Array.isArray(ev.artists) && ev.artists.length ? ev.artists.join(' • ') : '';
+}
+
+
+
+
+
+
+
+
+
