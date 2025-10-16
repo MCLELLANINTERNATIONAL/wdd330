@@ -1,134 +1,120 @@
-import eventData from '../ExternalServices.mjs';
-// wrapper for querySelector...returns matching element
+// utils.mjs
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
-// or a more concise version if you are into that sort of thing:
-// export const qs = (selector, parent = document) => parent.querySelector(selector);
 
-// retrieve data from localstorage
 export function getLocalStorage(key) {
-  try { const data = JSON.parse(localStorage.getItem(key));
-    // Always return an array for the cart key
+  try {
+    const data = JSON.parse(localStorage.getItem(key));
     return key === 'so-cart' ? (Array.isArray(data) ? data : []) : data;
   } catch {
     return key === 'so-cart' ? [] : null;
   }
 }
- 
-// save data to local storage
+
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-// set a listener for both touchend and click
-export function setClick(selector, callback) {
-  const el = qs(selector);
-  if (!el) return;
-  el.addEventListener('touchend', (event) => {
-    event.preventDefault();
-    callback();
-  });
-  el.addEventListener('click', callback);
-}
 
 export function getParam(param) {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const event = urlParams.get(param);
-  return event
-}
-
-export function renderListWithTemplate(
-  templateFn,
-  parentElement,
-  list,
-  position = 'afterbegin',
-  clear = false
-) {
-  // allow selector string or element
-  const parent =
-    typeof parentElement === 'string'
-      ? document.querySelector(parentElement)
-      : parentElement;
-
-  if (!parent) return;
-  if (clear) parent.innerHTML = '';
-  if (!Array.isArray(list) || list.length === 0) {
-    parent.insertAdjacentHTML(position, '<p>No events found.</p>');
-    return;
-  }
-
-  const htmlStrings = list.map(templateFn);
-  parent.insertAdjacentHTML(position, htmlStrings.join(''));
-}
-
-export function renderWithTemplate(templateFn, parentElement, callback) {
-  parentElement.innerHTML = templateFn;
-  if(callback) {
-    callback();
-  }
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
 }
 
 export async function loadTemplate(path) {
   const res = await fetch(path);
-  const template = await res.text();
-  return template;
+  return await res.text();
+}
+
+function basePrefixFromPathname() {
+  // e.g.
+  // /EE/index.html                -> prefix ''
+  // /EE/cart/index.html           -> prefix '../'
+  // /EE/event_listing/music.html  -> prefix '../'
+  const parts = location.pathname.replace(/\/$/, '').split('/');
+  // remove last part if it looks like a file (has dot)
+  const isFile = /\./.test(parts[parts.length - 1]);
+  const folders = isFile ? parts.slice(0, -1) : parts;
+  // folders like ["", "EE"] -> depth=1 (root of app)
+  // we want "../" for each folder after the app root
+  const appRootIndex = folders.indexOf('EE'); // adjust if folder name changes
+  const depth = appRootIndex >= 0 ? Math.max(0, folders.length - (appRootIndex + 1) - 0) : Math.max(0, folders.length - 2);
+  return '../'.repeat(depth);
+}
+
+function rebaseDomLinks(rootElem, prefix) {
+  const sel = ['a[data-rel="a"]', 'img[data-rel="img"]', 'link[data-rel="link"]'];
+  rootElem.querySelectorAll(sel.join(',')).forEach((el) => {
+    const attr = el.tagName === 'A' ? 'href' : 'src';
+    const val = el.getAttribute(attr);
+    if (!val) return;
+    // Skip absolute/ protocol links
+    if (/^(https?:)?\/\//i.test(val) || val.startsWith('/')) return;
+    el.setAttribute(attr, prefix + val);
+  });
 }
 
 export async function loadHeaderFooter() {
-  const headerTemplate = await loadTemplate('../partials/header.html');
-  const headerElement = document.querySelector('#main-head');
-  renderWithTemplate(headerTemplate, headerElement, updateCartBadge);
+  const prefix = basePrefixFromPathname();
 
-  const footerTemplate = await loadTemplate('../partials/footer.html');
-  const footerElement = document.querySelector('#main-foot');
-  renderWithTemplate(footerTemplate, footerElement);
+  // Load header
+  const headerHost = document.querySelector('#main-head');
+  if (headerHost) {
+    const headerHtml = await loadTemplate(`${prefix}partials/header.html`);
+    const frag = document.createElement('div');
+    frag.innerHTML = headerHtml;
+    rebaseDomLinks(frag, prefix);
+    headerHost.innerHTML = '';
+    headerHost.append(...frag.childNodes);
+    updateCartBadge();
+  }
+
+  // Load footer
+  const footerHost = document.querySelector('#main-foot');
+  if (footerHost) {
+    const footerHtml = await loadTemplate(`${prefix}partials/footer.html`);
+    const frag = document.createElement('div');
+    frag.innerHTML = footerHtml;
+    rebaseDomLinks(frag, prefix);
+    footerHost.innerHTML = '';
+    footerHost.append(...frag.childNodes);
+  }
 }
 
 export function updateCartBadge() {
   const cart = getLocalStorage('so-cart') || [];
-  const badge = document.querySelector('.cart-count');
-  if (!badge) return; // Silently returns if Badge doesn't exist yet
-  // Sum all quantities in the cart array:
-  const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  badge.textContent = totalCount;
-  if (totalCount > 0) badge.classList.remove('hide');
-  else badge.classList.add('hide');
+  const count = cart.reduce((sum, it) => sum + (it.quantity || 1), 0);
+
+  const badgeById = document.getElementById('cart-badge');
+  const badgeByClass = document.querySelector('.cart-count');
+
+  [badgeById, badgeByClass].forEach((el) => {
+    if (!el) return;
+    el.textContent = count;
+    el.classList.toggle('hide', count === 0);
+  });
 }
 
 export function bounceCartIcon() {
-  const cartIcon = document.querySelector('.cart');
+  const cartIcon = document.querySelector('.cart-btn');
   if (!cartIcon) return;
-
-  cartIcon.classList.remove('cart-bounce'); 
-  void cartIcon.offsetWidth; // force reflow so animation restarts
+  cartIcon.classList.remove('cart-bounce');
+  void cartIcon.offsetWidth;
   cartIcon.classList.add('cart-bounce');
 }
 
 export function alertMessage(message, scroll = true) {
-  // create element to hold the alert
   const alert = document.createElement('div');
   const main = document.querySelector('main');
-  // add a class to style the alert
   alert.classList.add('alert');
-  // set the contents. You should have a message and an X or something the user can click on to remove
-  alert.innerHTML = `<h2>${message}</h2><button id='alert-close'>&times;</button>`;
-  // add a listener to the alert to see if they clicked on the X
-  // if they did then remove the child
-  alert.addEventListener('click', function(e) {
-      if(e.target.id === 'alert-close') { // how can you tell if they clicked on the X or on something else?  hint: check out e.target.tagName or e.target.innerText
-        main.removeChild(this);
-      }
-  })
-  // add the alert to the top of main
+  alert.innerHTML = `<h2>${message}</h2><button id="alert-close">&times;</button>`;
+  alert.addEventListener('click', (e) => {
+    if (e.target.id === 'alert-close') main.removeChild(alert);
+  });
   main.prepend(alert);
-  // make sure they see the alert by scrolling to the top of the window
-  // you may not always want to do this...so default to scroll=true, but allow it to be passed in and overridden.
-  if(scroll)
-    window.scrollTo(0,0);
+  if (scroll) window.scrollTo(0, 0);
 }
 
 export function removeAllAlerts() {
-  const alerts = document.querySelectorAll('.alert');
-  alerts.forEach((alert) => document.querySelector('main').removeChild(alert));
+  document.querySelectorAll('.alert').forEach((a) => a.remove());
 }

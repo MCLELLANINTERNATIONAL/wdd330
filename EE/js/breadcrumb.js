@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== get Home URL from your nav (e.g., '../index.html') and resolve it
     const navHomeLink =
-    document.querySelector('nav a[title="index"], nav a[href$="index.html"]');
+        document.querySelector('nav a[title="index"], nav a[href$="index.html"]');
 
     const HOME_URL = navHomeLink
         ? new URL(navHomeLink.getAttribute('href'), location.href).href
@@ -35,50 +35,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getCategoryFromTitle = () => {
         const h2 = document.querySelector('.event-detail h2');
-        if (!h2) return 'event';
-
+        if (!h2) return 'Events';
         const text = h2.textContent.toLowerCase();
-        const keywords = ['music', 'theatre', 'cinema', 'sport'];
-
-        // Look for the first keyword in the h2 text
+        const keywords = ['Music', 'Theatre', 'Cinema', 'Sport'];
         const match = keywords.find((word) => text.includes(word));
-
         return match ? match.charAt(0).toUpperCase() + match.slice(1) : 'event';
     };
 
     const getCategoryFromList = () =>
         document.querySelector('.event-list')?.dataset?.category || null;
 
-    const rememberCategory = (cat) => {
-        if (cat) localStorage.setItem('last-category', cat);
-    };
+    const rememberCategory = (cat) => { if (cat) localStorage.setItem('last-category', cat); };
     const recallCategory = () => localStorage.getItem('last-category');
 
     const setCrumb = (html) => {
-        crumb.innerHTML = `<a href='${HOME_URL}'>Home</a> &gt; ${html}`;
+        crumb.innerHTML = `<a href="${HOME_URL}">Home</a> &gt; ${html}`;
         crumb.style.display = '';
     };
 
     const isDetail = path.includes('/event_pages/');
     const isCart = path.includes('/cart/');
     const isList = !!document.querySelector('.event-list');
+    const isCheckout = path.includes('/checkout/');
+    const checkoutIndexUrl = new URL('../checkout/index.html', location.href).href;
 
+    // Cart
     if (isCart) {
-        const category = 'Cart';
-        setCrumb(`<span>${category}</span>`);
+        setCrumb(`<span>Cart</span>`);
         return;
     }
 
+    // ✅ Checkout (handle BEFORE detail/list)
+    if (isCheckout) {
+        const isSuccess = /\/success\.html$/i.test(path) || !!document.querySelector('.success-div');
+        if (isSuccess) {
+            setCrumb(`<a href="${checkoutIndexUrl}">Checkout</a> &gt; <span>Success</span>`);
+        } else {
+            setCrumb(`<span>Checkout</span>`);
+        }
+        return;
+    }
+
+    // Event detail
     if (isDetail) {
         const category = recallCategory() || 'events';
         setCrumb(`<span>${category}</span>`);
         return;
     }
 
+    // Event list
     if (isList) {
-        // event list: 'Category -> (N items)'
         const listEl = document.querySelector('.event-list');
-
         const update = () => {
             const category =
                 getCategoryFromParam() ||
