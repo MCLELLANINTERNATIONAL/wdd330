@@ -17,11 +17,6 @@
     /* Black: text */
     --ee-gray-50: #F3F4F6;
     /* Light grey: borders/bg */
-    --edge-pad: clamp(10px, 3vw, 5%);
-    /* used by BOTH search bar + burger */
-    --burger-w: clamp(36px, 3vw, 44px);
-    /* visual width of the ☰ hit area */
-    --gap: clamp(6px, 2vw, 12px);
 }
 
 /* === BASE === */
@@ -65,29 +60,26 @@ header {
 
 /* === NAV === */
 
+.top-header,
+.nav-section {
+    margin: 0;
+    padding: 0;
+}
+
 .nav-section {
     background-color: var(--ee-primary);
 }
 
-/* Hamburger: top-right, same edge pad as search bar, responsive clamp */
 #menu {
-    position: absolute;
-    top: clamp(8px, 2vw, 16px);
-    right: var(--edge-pad);
-    /* EXACTLY aligns with search bar end */
-    width: var(--burger-w);
-    height: var(--burger-w);
     display: block;
-    font-size: clamp(1.6rem, 3vw, 2rem);
-    font-weight: 800;
+    font-size: 2rem;
+    font-weight: bolder;
     text-decoration: none;
     border: 0;
     background: none;
     color: #fff;
+    position: absolute;
     cursor: pointer;
-    line-height: 1;
-    z-index: 10001;
-    /* above banner & nav */
 }
 
 #menu::before {
@@ -155,23 +147,227 @@ header {
 }
 
 .search-bar {
+    width: 100%;
+    border: solid 2px var(--ee-amber);
+    border-radius: 50px;
+    align-items: center;
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.25em;
+}
+
+#desktop-search {
+    display: none;
+}
+
+#mobile-search {
+    display: block;
+}
+
+#item-search {
+    width: 75%;
+    margin: 0.5em;
+}
+
+/* === MAIN LAYOUT === */
+
+main {
+    max-width: 95%;
+    margin: 5px;
+    padding: 3.5px;
+    background-color: #fff;
+    border-radius: 8px;
+    display: grid;
+    gap: 5px;
+    border: 1px solid var(--ee-gray-50);
+}
+
+.success-div h2,
+p {
+    text-align: center;
+    font-weight: 800;
+}
+
+.success-div h2 {
+    color: var(--ee-amber);
+}
+
+/* ===== Breadcrumbs ===== */
+#breadcrumbs {
+    /* keep it aligned with your page content */
+    max-width: 1200px;
+    /* match your content width */
+    padding: 1rem;
+    /* consistent left/right gutter */
+    font-size: 1rem;
+    color: var(--ee-dark, #525252);
+    /* make it sit on one line but wrap nicely if needed */
+    overflow-wrap: anywhere;
+}
+
+
+/* links (previous levels) */
+#breadcrumbs a {
+    color: var(--ee-amber, #D97706);
+    font-weight: 800;
+}
+
+#breadcrumbs a:hover,
+#breadcrumbs a:focus {
+    cursor: pointer;
+}
+
+/* current page (you render as <span>…</span>) */
+#breadcrumbs span {
+    font-weight: 500;
+    /* bold */
+    color: var(--ee-black, #000000);
+    /* stronger color */
+}
+
+/* soften the “ > ” if you keep it in your HTML string */
+#breadcrumbs {
+    word-spacing: .2rem;
+    /* adds a touch of space around the > characters */
+}
+
+/* === TOP BANNER === */
+
+.banner {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .65);
+    /* neutral overlay */
+    color: #fff;
+    padding: 1rem;
+    font-size: 1.4rem;
+    font-weight: bolder;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+}
+
+.banner span {
+    flex: 1;
+    min-width: 200px;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 2rem;
+}
+
+.hidden {
+    display: none;
+}
+
+/* === WELCOME CARD === */
+
+/* === CTA BUTTONS === */
+
+.cta-button,
+.book-now {
+    display: inline-block;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--ee-primary);
+    /* primary CTA */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color .2s ease, transform .06s ease;
+}
+
+.cta-button {
+    padding: 4px 6px;
+    margin-top: 2px;
+    margin-bottom: 6px;
+}
+
+.cta-button:hover,
+.book-now:hover {
+    background-color: #3053c0;
+    text-decoration: none;
+}
+
+.cta-button:active,
+.book-now:active {
+    transform: translateY(1px);
+}
+
+/* === HEADINGS === */
+
+main h1 {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    color: var(--ee-dark);
+}
+
+main h2 {
+    font-size: 2.5rem;
+    color: var(--ee-green-1);
+    /* Secondary for H2 */
+    text-align: center;
+    margin: 1rem;
+}
+
+main h3 {
+    color: var(--ee-green-2);
+    /* Accent green for H3 */
+}
+
+
+/* utility classes */
+.highlight {
+    color: var(--tertiary-color);
+}
+
+button {
+    padding: 0.5em 2em;
+    background-color: var(--secondary-color);
+    color: white;
+    margin: auto;
+    display: block;
+    border: 0;
+    font-size: var(--small-font);
+    cursor: pointer;
+}
+
+/*#desktop-search {
+    display: none;
+}
+
+#mobile-search {
+    display: block;
+}*/
+
+#item-search {
+    width: 75%;
+    margin: 0.5em;
+}
+
+.search-bar {
     display: flex;
     width: 100%;
     max-width: 30%;
-    margin-left: auto;
     margin: 5% 3%;
     border-radius: 9px;
     border: 2px solid var(--border);
     background: linear-gradient(#f6b757, #f0a83a);
-    margin-right: var(--edge-pad);
     /* thin top/bottom edge like Amazon */
     padding: 2px;
     box-shadow: inset 0 0 0 1px var(--border-dark);
     max-inline-size: 15%;
-    /* defines the “right edge” we match */
-    margin-right: var(--edge-pad);
-    /* defines the “right edge” we match */
-    max-width: clamp(10px, 16vw, 420px);
 }
 
 .search-input {
@@ -230,98 +426,6 @@ header {
     flex: 1 1 100%;
 }
 
-#item-search {
-    width: 75%;
-    margin: 0.5em;
-}
-
-/* === MAIN LAYOUT === */
-
-main {
-    max-width: 95%;
-    margin: 5px;
-    padding: 3.5px;
-    background-color: #fff;
-    border-radius: 8px;
-    display: grid;
-    gap: 5px;
-    border: 1px solid var(--ee-gray-50);
-}
-
-/* ===== Breadcrumbs ===== */
-#breadcrumbs {
-    /* keep it aligned with your page content */
-    max-width: 1200px;
-    /* match your content width */
-    padding: 1rem;
-    /* consistent left/right gutter */
-    font-size: 1rem;
-    color: var(--ee-dark, #525252);
-    /* make it sit on one line but wrap nicely if needed */
-    overflow-wrap: anywhere;
-}
-
-/* links (previous levels) */
-#breadcrumbs a {
-    color: var(--ee-amber, #D97706);
-    font-weight: 800;
-}
-
-#breadcrumbs a:hover,
-#breadcrumbs a:focus {
-    cursor: pointer;
-}
-
-/* current page (you render as <span>…</span>) */
-#breadcrumbs span {
-    font-weight: 600;
-    /* bold */
-    color: var(--ee-black, #000000);
-    /* stronger color */
-}
-
-/* softs the “ > ” if you keep it in your HTML string */
-#breadcrumbs {
-    word-spacing: .2rem;
-    /* adds a touch of space around the > characters */
-}
-
-.success-div h2,
-p {
-    text-align: center;
-    font-weight: 800;
-}
-
-.success-div h2 {
-    color: var(--ee-amber);
-}
-
-/* === DON'T MISS OUT!! CARD === */
-
-/* === CTA BUTTONS === */
-
-
-
-/* === HEADINGS === */
-
-main h1 {
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5rem;
-    color: var(--ee-dark);
-}
-
-main h2 {
-    font-size: 2.5rem;
-    color: var(--ee-green-1);
-    text-align: center;
-    margin: 1rem;
-}
-
-main h3 {
-    color: var(--ee-green-2);
-}
-
 /* End utility classes */
 
 /* Cart icon styles */
@@ -366,7 +470,12 @@ header.has-corner-cart .cart-btn {
     right: -6px;
 }
 
-/* badge position */
+/* badge position (you likely already have this) */
+#cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+}
 
 .cart-img {
     stroke: currentColor;
@@ -380,7 +489,7 @@ header.has-corner-cart .cart-btn {
 #cart-badge {
     position: absolute;
     top: -6px;
-    right: 50%;
+    right: -6px;
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
@@ -458,25 +567,9 @@ header.has-corner-cart .cart-btn {
     height: 100%;
 }
 
-/* Styles for product lists */
-mission {
-    position: absolute;
-    top: 1rem;
-    left: 0;
-    right: 0;
-    line-height: 1.3;
-    width: 100%;
-    background-color: var(--dark-grey);
-    color: var(--light-grey);
-    opacity: 0.8;
-  }
-  
-  .mission p {
-    margin: 0 auto;
-    width: 50%;
-    text-align: center;
-  }
 
+
+/* Styles for product lists */
 .product-card {
     position: relative;
     flex: 1 1 45%;
@@ -502,6 +595,7 @@ mission {
 }
 
 /* Product Quick View */
+
 .quick-view-modal {
     position: fixed;
     top: 25%;
@@ -671,7 +765,7 @@ mission {
     display: none;
     position: absolute;
     top: 10%;
-    right: -10%;
+    right: -30%;
     background: #e53935;
     color: #fff;
     border-radius: 50%;
@@ -874,79 +968,4 @@ footer p {
 
 .btn-register:hover {
     background-color: #4a7858;
-}
-
-/* ===== Mobile: cart drops under search, badge stays on the corner ===== */
-@media (max-width: 640px) {
-    header {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    /* Search bar takes its own row, right-aligned */
-    .search-bar {
-        order: 2;
-        flex: 1 1 100%;
-        margin-left: auto;
-        margin-right: var(--edge-pad);
-        margin-top: clamp(8px, 2vw, 12px);
-        max-width: 100%;
-    }
-
-    /* Cart sits UNDER the search bar, right-aligned */
-    header .cart-btn {
-        order: 3;
-        display: inline-flex !important;
-        align-items: center;
-        align-self: flex-end;
-        margin-right: var(--edge-pad);
-        margin-top: clamp(8px, 2vw, 12px);
-
-        /* KEY: stay positioned for the badge anchor, but not absolutely pinned */
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        bottom: auto !important;
-        left: auto !important;
-    }
-
-    /* Badge remains on the cart button's corner (same as desktop) */
-    #cart-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        min-width: 18px;
-        height: 18px;
-        padding: 0 5px;
-        border-radius: 999px;
-        background: #e53935;
-        color: #fff;
-        font: 700 12px/18px 'Montserrat', sans-serif;
-        text-align: center;
-        pointer-events: none;
-        z-index: 1;
-    }
-
-    /* Hamburger keeps aligning with the search bar's right edge */
-    #menu {
-        position: absolute;
-        top: clamp(8px, 2vw, 16px);
-        right: var(--edge-pad);
-        z-index: 10010;
-    }
-
-    /* Mobile nav sits below burger/cart; won't cover them */
-    .navigation,
-    .navigation.show {
-        position: relative;
-        z-index: 9991;
-    }
-
-    /* Neutralize any "corner pinning" rules on small screens */
-    header.has-corner-cart .cart-btn {
-        position: relative !important;
-        right: auto !important;
-        bottom: auto !important;
-    }
 }
