@@ -1,5 +1,5 @@
 // eventDetails.mjs — EVENTS version (Ticketmaster + Eventbrite)
-import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from './Api.js';
+import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from './api.mjs';
 import { getLocalStorage, setLocalStorage, updateCartBadge, bounceCartIcon, getParam } from './utils.mjs';
 
 // ---- helpers ----

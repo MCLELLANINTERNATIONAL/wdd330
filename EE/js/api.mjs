@@ -1,12 +1,19 @@
-// Edinburgh Events (Ticketmaster + Eventbrite)
-// --------------------------------------------------------
-// Keys/tokens:
-const TM_KEY = 'HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq';           // Ticketmaster API key
-const EB_TOKEN = '3JHCKH7IX3J5SBA63XCU';         // Eventbrite personal OAuth token (Bearer)
+// =====================================================
+//  Edinburgh Entertainment — Unified API + Cart Module
+//  Handles Ticketmaster + Eventbrite + Local Cart storage
+// ========================================================
 
-// Endpoints
+// ---- API Keys / Tokens ----
+// 👇 Insert your real keys between the quotes
+const TM_KEY = 'HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq';      // Ticketmaster API key
+const EB_TOKEN = '3JHCKH7IX3J5SBA63XCU';    // Eventbrite personal OAuth token (Bearer)
+
+// ---- Endpoints ----
 const TM_API = 'https://app.ticketmaster.com/discovery/v2';
 const EB_API = 'https://www.eventbriteapi.com/v3';
+
+// ---- CORS Proxy (needed for GitHub Pages / static sites) ----
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 // ---- Utilities ----
 const nowISO = () => new Date().toISOString();
@@ -14,9 +21,7 @@ const toNum = (x) => (x == null ? null : Number(x));
 const clean = (s) => (typeof s === 'string' ? s.trim() : '');
 const mapUrl = (lat, lon, label = '') =>
   lat && lon
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-        `${lat},${lon} ${label}`
-      )}`
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lon} ${label}`)}`
     : '';
 const directionsUrl = (lat, lon) =>
   lat && lon
@@ -40,22 +45,9 @@ function buildUrl(base, params) {
   return u.toString();
 }
 
-// ---- Normalized event shape ----
-// {
-//   id, source, category,
-//   name, description,
-//   classifications: { segment, genre, subGenre },
-//   start: ISO, end: ISO,
-//   image: { url, width, height },
-//   price: { type, currency, min, max },
-//   venue: {
-//     id, name, city, state, country, address, postalCode,
-//     latitude, longitude, mapUrl, directionsUrl
-//   },
-//   url // canonical event page
-// }
-
-// ---- Ticketmaster (Music, Theatre, Sport) ----
+// ========================================================
+//  Ticketmaster (Music, Theatre, Sport)
+// ========================================================
 const TM_CATEGORY_SEGMENT = {
   music: 'Music',
   theatre: 'Arts & Theatre',
@@ -63,8 +55,7 @@ const TM_CATEGORY_SEGMENT = {
 };
 
 function pickTMImage(images = []) {
-  // Prefer 3:2 or 16:9; fallback to first
-  const pref = images.find((i) => i.ratio === '3_2') || images.find((i) => i.ratio === '16_9');
+  const pref = images.find(i => i.ratio === '3_2') || images.find(i => i.ratio === '16_9');
   return pref || images[0] || null;
 }
 
@@ -112,7 +103,7 @@ function normalizeTM(ev, category) {
   };
 }
 
-async function getTicketmasterEvents(category, { size = 100 } = {}) {
+export async function getTicketmasterEvents(category, { size = 100 } = {}) {
   const segmentName = TM_CATEGORY_SEGMENT[category];
   if (!segmentName) return [];
 
@@ -122,36 +113,31 @@ async function getTicketmasterEvents(category, { size = 100 } = {}) {
     countryCode: 'GB',
     segmentName,
     sort: 'date,asc',
-    startDateTime: nowISO(), // current & future
+    startDateTime: nowISO(),
     size,
     includeTBA: 'yes',
     includeTBD: 'yes',
   });
 
-  const data = await fetchJson(url, { __label: 'Ticketmaster Events' });
+  // Use proxy for browser CORS safety
+  const proxiedUrl = CORS_PROXY + encodeURIComponent(url);
+  const data = await fetchJson(proxiedUrl, { __label: 'Ticketmaster Events' });
   const events = data._embedded?.events || [];
-  return events.map((e) => normalizeTM(e, category));
+  return events.map(e => normalizeTM(e, category));
 }
 
-// ---- Eventbrite (Cinema) ----
-// Search Film/Media (category 105) and also match 'cinema OR film' in Edinburgh.
-// Expand venue so we can normalize without extra calls.
+// ========================================================
+//  Eventbrite (Cinema)
+// ========================================================
 function normalizeEB(ev) {
   const venue = ev.venue || {};
   const lat = venue.latitude ? Number(venue.latitude) : null;
   const lon = venue.longitude ? Number(venue.longitude) : null;
-
-  // Ticket availability (if present) gives min/max price
   const ta = ev.ticket_availability || {};
   const minp = ta.minimum_ticket_price || {};
   const maxp = ta.maximum_ticket_price || {};
-
-  // Image
   const logo = ev.logo || {};
-  const imgUrl =
-    logo.original?.url ||
-    logo.url ||
-    ''; // Eventbrite doesn't always provide width/height in search payload
+  const imgUrl = logo.original?.url || logo.url || '';
 
   return {
     id: String(ev.id),
@@ -190,42 +176,45 @@ function normalizeEB(ev) {
   };
 }
 
-async function getEventbriteCinema({ pageSize = 50 } = {}) {
+export async function getEventbriteCinema({ pageSize = 50 } = {}) {
   const params = {
-    // Location: Edinburgh, Scotland, UK
     'location.address': 'Edinburgh, Scotland, UK',
     'start_date.range_start': nowISO(),
     sort_by: 'date',
-    // Film/Media category
     categories: '105',
-    // Helpful query terms for cinema
     q: 'cinema OR film OR screening',
-    expand: 'venue', // include venue details to avoid a second fetch
+    expand: 'venue',
     'page_size': pageSize,
   };
 
-  const url = buildUrl(`${EB_API}/events/search/`, params);
-  const data = await fetchJson(url, {
+  const rawUrl = buildUrl(`${EB_API}/events/search/`, params);
+  const proxiedUrl = CORS_PROXY + encodeURIComponent(rawUrl);
+
+  const data = await fetchJson(proxiedUrl, {
     __label: 'Eventbrite Events',
     headers: { Authorization: `Bearer ${EB_TOKEN}` },
   });
 
   const events = data.events || [];
-  return events.map((e) => normalizeEB(e));
+  return events.map(e => normalizeEB(e));
 }
 
-// ---- Aggregator + Public API ----
+// ========================================================
+//  Aggregator + Public API
+// ========================================================
 export async function fetchEventsByCategory(category) {
   const cat = (category || '').toLowerCase();
+
   if (cat === 'cinema') {
     const eb = await getEventbriteCinema();
     return eb.sort((a, b) => (a.start || '').localeCompare(b.start || ''));
   }
+
   if (['music', 'theatre', 'sport'].includes(cat)) {
     const tm = await getTicketmasterEvents(cat);
     return tm.sort((a, b) => (a.start || '').localeCompare(b.start || ''));
   }
-  // If 'all', combine
+
   if (cat === 'all') {
     const [music, theatre, sport, cinema] = await Promise.all([
       getTicketmasterEvents('music'),
@@ -237,10 +226,10 @@ export async function fetchEventsByCategory(category) {
       (a.start || '').localeCompare(b.start || '')
     );
   }
-  throw new Error('Unknown category. Use one of: music, theatre, cinema, sport, all');
+
+  throw new Error('Unknown category. Use: music, theatre, cinema, sport, or all.');
 }
 
-// Convenience: fetch grouped
 export async function fetchAllGrouped() {
   const [music, theatre, sport, cinema] = await Promise.all([
     getTicketmasterEvents('music'),
@@ -248,10 +237,12 @@ export async function fetchAllGrouped() {
     getTicketmasterEvents('sport'),
     getEventbriteCinema(),
   ]);
-  return { music, theatre, cinema, sport };
+  return { music, theatre, sport, cinema };
 }
 
-// ---- Cart (LocalStorage) ----
+// ========================================================
+//  Cart (LocalStorage)
+// ========================================================
 const CART_KEY = 'ee_cart';
 
 export function getCart() {
@@ -270,14 +261,14 @@ export function addToCart(eventObj, qty = 1) {
   if (!eventObj?.id) throw new Error('Invalid event for cart');
   const items = getCart();
   const key = `${eventObj.source}:${eventObj.id}`;
-  const idx = items.findIndex((it) => it.key === key);
+  const idx = items.findIndex(it => it.key === key);
+
   if (idx >= 0) {
     items[idx].qty += qty;
   } else {
     items.push({
       key,
       qty,
-      // keep a lightweight snapshot for display
       id: eventObj.id,
       source: eventObj.source,
       category: eventObj.category,
@@ -291,12 +282,13 @@ export function addToCart(eventObj, qty = 1) {
       url: eventObj.url || '',
     });
   }
+
   saveCart(items);
   return items;
 }
 
 export function removeFromCart(key) {
-  const items = getCart().filter((it) => it.key !== key);
+  const items = getCart().filter(it => it.key !== key);
   saveCart(items);
   return items;
 }
@@ -306,8 +298,9 @@ export function clearCart() {
   return [];
 }
 
-// ---- Example usage helpers ----
-// UI helpers (safe fallbacks if fields are empty)
+// ========================================================
+//  Helpers for Display
+// ========================================================
 export function formatWhen(ev) {
   if (!ev?.start) return '';
   try {

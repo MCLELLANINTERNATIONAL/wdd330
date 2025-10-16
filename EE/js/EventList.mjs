@@ -1,5 +1,5 @@
 import { renderListWithTemplate, getParam } from './utils.mjs';
-import eventData from './ExternalServices.mjs';
+import eventData from '../ExternalServices.mjs';
 import eventDetails, { rendereventDetailsHTML } from './EventDetails.mjs';
 
 function eventCardTemplate(event) {
