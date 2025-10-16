@@ -17,39 +17,7 @@
 </head>
 
 <body>
-    <header>
-        <img src="../images/logo.png" alt="EE" loading="lazy" width="80" height="80">
-        <h1>Edinburgh Entertainment Events</h1>
-
-        <form class="search-bar" action="#" method="GET" role="search" aria-label="Search Events">
-            <input type="search" name="q" class="search-input" placeholder="Search Events" aria-label="Search events" />
-            <button class="search-btn" type="submit" aria-label="Search">
-                <!-- Magnifier icon (SVG) -->
-                <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
-                    <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" />
-                </svg>
-            </button>
-        </form>
-
-        <a href="cart.html" class="cart-btn" aria-label="Open cart">
-            <img class="cart-img" src="../images/cart.png" width="35" height="35" alt="" aria-hidden="true">
-            <span id="cart-badge" aria-live="polite" aria-atomic="true">0</span>
-        </a>
-    </header>
-
-    <div class="nav-section">
-        <button id="menu" aria-label="Toggle navigation menu"></button>
-        <nav class="header-nav">
-            <ul class="navigation">
-                <li><a href="../index.html" title="index" class="active">Home</a></li>
-                <li><a href="../event_listing/index.html" title="events">Events</a></li>
-                <li><a href="../cart/index.html" title="cart">Cart</a></li>
-                <li><a href="../checkout/index.html" title="checkout">Checkout</a></li>
-            </ul>
-        </nav>
-    </div>
+    <div id="main-head"></div>
 
     <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
     <main class="divider">
@@ -67,19 +35,12 @@
             <ul class="event-list"></ul>
         </section>
     </main>
-    <footer>
-        <p>Contact Us: Phone:0123-456-7890</p>
-        <p>Email: info@edinburghentertaiment.com</p>
-
-        <nav class="footer-nav">
-
-        </nav>
-
-        <p>&copy; <span id="currentyear"></span> 🏴󠁧󠁢󠁳󠁣󠁴󠁿 WDD330 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Kim Kathleen Brown 🏴󠁧󠁢󠁳󠁣󠁴󠁿
-            Edinburgh,Scotland
-            🏴󠁧󠁢󠁳󠁣󠁴󠁿</p>
-        <p id="lastModified"></p>
-    </footer>
+    <footer id="main-foot"></footer>
+    <script type="module">
+    import { loadHeaderFooter } from '../js/utils.mjs';
+    loadHeaderFooter();
+    </script>
+  
 </body>
 
 </html>
