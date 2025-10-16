@@ -23,7 +23,7 @@ main {
   background-color: white;
   padding: 2.5rem;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.484);
+  box-shadow: 0 5px 15px rgba(7, 32, 177, 0.855);
   width: 100%;
   max-width: 450px;
   text-align: center;
@@ -63,7 +63,7 @@ main {
 
 .form-group input:focus {
   outline: none;
-  border-color: #5c946e;
+  border-color: #4169e1;
   box-shadow: 0 0 5px rgba(3, 224, 73, 0.941);
 }
 
@@ -73,8 +73,7 @@ main {
   border: none;
   border-radius: 5px;
   background-color: #00f400;
-  ;
-  color: white;
+  color: #1548e2;;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
@@ -82,7 +81,7 @@ main {
 }
 
 .submit-btn:hover {
-  background-color: #4a7858;
+  background-color: #a7b7ac;
 }
 
 #success-message {
