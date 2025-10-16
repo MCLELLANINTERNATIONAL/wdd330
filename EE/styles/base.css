@@ -459,6 +459,24 @@ header.has-corner-cart .cart-btn {
 }
 
 /* Styles for product lists */
+mission {
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    right: 0;
+    line-height: 1.3;
+    width: 100%;
+    background-color: var(--dark-grey);
+    color: var(--light-grey);
+    opacity: 0.8;
+}
+
+.mission p {
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+}
+
 .product-card {
     position: relative;
     flex: 1 1 45%;
@@ -484,7 +502,6 @@ header.has-corner-cart .cart-btn {
 }
 
 /* Product Quick View */
-
 .quick-view-modal {
     position: fixed;
     top: 25%;
