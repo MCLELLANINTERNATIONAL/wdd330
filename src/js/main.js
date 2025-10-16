@@ -1,70 +1,56 @@
-import { loadHeaderFooter } from './utils.mjs';
-import { getLocalStorage, setLocalStorage } from './utils.mjs';
+import { loadHeaderFooter } from '../utils.mjs';
+
+function waitForElement(selector, timeout = 3000) {
+  return new Promise((resolve) => {
+    const found = document.querySelector(selector);
+    if (found) return resolve(found);
+
+    const obs = new MutationObserver(() => {
+      const el = document.querySelector(selector);
+      if (el) { obs.disconnect(); resolve(el); }
+    });
+
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+
+    setTimeout(() => { obs.disconnect(); resolve(null); }, timeout);
+  });
+}
 
 async function init() {
-  await loadHeaderFooter(); // wait for header/footer to load
+  await loadHeaderFooter();
 
-  // Now the search button exists in the DOM
+  // === Search wiring ===
   const searchInput = document.querySelector('#item-search');
   const searchButton = document.querySelector('#search-button');
 
-  searchButton.addEventListener('click', () => {
+  const goSearch = () => {
+    if (!searchInput) return;
     const term = searchInput.value.trim();
     if (term) {
       window.location.href = `../search_results/index.html?query=${encodeURIComponent(term)}`;
     }
-  });
+  };
 
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const term = searchInput.value.trim();
-      if (term) {
-        window.location.href = `../search_results/index.html?query=${encodeURIComponent(term)}`;
-      }
-    }
-  });
+  if (searchButton) searchButton.addEventListener('click', goSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') goSearch(); });
+  }
+
+  // === Welcome modal (injected): show every page load ===
+  const modalOverlay = (await waitForElement('#welcome-modal-overlay')) || document.getElementById('welcome-modal-overlay');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+
+  const showModal = () => { if (modalOverlay) modalOverlay.style.display = 'flex'; };
+  const hideModal = () => { if (modalOverlay) modalOverlay.style.display = 'none'; };
+
+  setTimeout(showModal, 300);
+
+  if (modalOverlay && closeModalBtn) {
+    closeModalBtn.addEventListener('click', hideModal);
+    modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) hideModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideModal(); });
+  }
 }
 
 init();
 
-// Logic for the Welcome Modal for the first visit
-
-window.addEventListener('DOMContentLoaded', () => {
-  // Select modal elements in HTML
-  const modalOverlay = document.getElementById('welcome-modal-overlay');
-  const closeModalBtn = document.getElementById('close-modal-btn');
-
-  // Define a unique key to use in localStorage
-  const visitedKey = getLocalStorage('hasVisitedBefore');
-
-  function showModal() {
-    if (modalOverlay) {
-      modalOverlay.style.display = 'flex';
-    }
-  }
-
-  function hideModal() {
-    if (modalOverlay) {
-      modalOverlay.style.display = 'none';
-    }
-  }
-
-  // Checks if the 'hasVisitedBefore' key DOES NOT exist in localStorage
-  if (!visitedKey) {
-    // If it doesn't exist, it's the first visit.
-
-    setTimeout(showModal, 300);
-
-    setLocalStorage('hasVisitedBefore', 'true');
-  }
-
-  if (modalOverlay && closeModalBtn) {
-    closeModalBtn.addEventListener('click', hideModal);
-
-    modalOverlay.addEventListener('click', (event) => {
-      if (event.target === modalOverlay) {
-        hideModal();
-      }
-    });
-  }
-});
