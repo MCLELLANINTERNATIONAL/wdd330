@@ -84,7 +84,7 @@ function firstNumber(...candidates) {
   function computeDiscount(event) {
     const finalPrice = Number(event.FinalPrice);
   
-    // Try to find a real "compare at" price from common API fields
+    // Try to find a real 'compare at' price from common API fields
     const compareAt = firstNumber(
       event.SuggestedRetailPrice,
       event.ListPrice,
@@ -137,9 +137,9 @@ function eventDetailsTemplate(event) {
   const priceEl = document.getElementById('eventPrice');
   if (priceEl) {
     priceEl.innerHTML = `
-    <div class="price-compare" aria-label="Original price">${money(comparePrice)}</div>
-    <div class="price-discount" aria-label="Discount amount">Discount ${discountPct}%: -${money(saveAmount)}</div>
-    <div class="price-final" aria-label="New price">${money(finalPrice)}</div>
+    <div class='price-compare' aria-label='Original price'>${money(comparePrice)}</div>
+    <div class='price-discount' aria-label='Discount amount'>Discount ${discountPct}%: -${money(saveAmount)}</div>
+    <div class='price-final' aria-label='New price'>${money(finalPrice)}</div>
   `;
 }
 
@@ -155,7 +155,7 @@ function eventDetailsTemplate(event) {
     let wrapper = img.closest('.event-media');
     if (!wrapper) {
         wrapper = document.createElement('div');
-        wrapper.className = "event-media";
+        wrapper.className = 'event-media';
         // Insert wrapper before image and move image inside it
         img.parentElement.insertBefore(wrapper, img);
         wrapper.appendChild(img);
@@ -200,24 +200,24 @@ export function rendereventDetailsHTML(event) {
 
   function money(n) { return `$${Number(n).toFixed(2)}`; }
   return `
-    <a href="../event_pages/index.html?category=${getParam('category')}&id=${encodeURIComponent(event.Id)}">
-      <div class="event-modal">
-        <div id="discountFlag" class="discount-flag">${discountPct}% off</div>
+    <a href='../event_pages/index.html?category=${getParam('category')}&id=${encodeURIComponent(event.Id)}'>
+      <div class='event-modal'>
+        <div id='discountFlag' class='discount-flag'>${discountPct}% off</div>
         <img 
-          src="${event.Images.PrimaryMedium}" 
-          srcset="
+          src='${event.Images.PrimaryMedium}' 
+          srcset='
             ${event.Images.PrimarySmall} 80w,
             ${event.Images.PrimaryMedium} 160w
-          "
-          sizes="(max-width: 600px) 50vw, 160px"
-          alt="${event.NameWithoutBrand}"
+          '
+          sizes='(max-width: 600px) 50vw, 160px'
+          alt='${event.NameWithoutBrand}'
         >
         <h2>${event.Brand?.Name ?? ''}</h2>
         <h3>${event.NameWithoutBrand ?? event.Name}</h3>
-        <p class="price-final">Price: ${money(finalPrice)}</p>
-        <p class="description">${event.DescriptionHtmlSimple ?? ''}</p>
+        <p class='price-final'>Price: ${money(finalPrice)}</p>
+        <p class='description'>${event.DescriptionHtmlSimple ?? ''}</p>
       </a>
-      <button id="addToCartModal" data-id="${event.Id}">Add to Cart</button>
+      <button id='addToCartModal' data-id='${event.Id}'>Add to Cart</button>
     </div>
   `;
 }

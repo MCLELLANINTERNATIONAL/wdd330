@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const crumb = document.getElementById('breadcrumbs');
     if (!crumb) return;
 
-    // ===== get Home URL from your nav (e.g., "../index.html") and resolve it
+    // ===== get Home URL from your nav (e.g., '../index.html') and resolve it
     const navHomeLink =
-        document.querySelector('nav a[title="index"], nav a[href$="index.html"]');
+    document.querySelector('nav a[title="index"], nav a[href$="index.html"]');
 
     const HOME_URL = navHomeLink
         ? new URL(navHomeLink.getAttribute('href'), location.href).href
         : new URL('../index.html', location.href).href; // fallback
 
-    // Consider both "/path/" and "/path/index.html" as Home
+    // Consider both '/path/' and '/path/index.html' as Home
     const isHome = (() => {
         const home = new URL(HOME_URL);
         const here = new URL(location.href);
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const recallCategory = () => localStorage.getItem('last-category');
 
     const setCrumb = (html) => {
-        crumb.innerHTML = `<a href="${HOME_URL}">Home</a> &gt; ${html}`;
+        crumb.innerHTML = `<a href='${HOME_URL}'>Home</a> &gt; ${html}`;
         crumb.style.display = '';
     };
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (isList) {
-        // event list: "Category -> (N items)"
+        // event list: 'Category -> (N items)'
         const listEl = document.querySelector('.event-list');
 
         const update = () => {

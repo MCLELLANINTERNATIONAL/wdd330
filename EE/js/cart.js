@@ -38,8 +38,8 @@ function showRemoveMessage(event, onChoice) {
   if (event.quantity === 1) {
     msg.textContent = `Are you sure you want to remove ${event.Name}?`;
     opts.innerHTML = `
-      <button id="confirmRemove">Remove</button>
-      <button id="cancelRemove">Cancel</button>
+      <button id='confirmRemove'>Remove</button>
+      <button id='cancelRemove'>Cancel</button>
     `;
     initialFocus = document.getElementById('confirmRemove');
     document.getElementById('confirmRemove').onclick = () => {
@@ -56,9 +56,9 @@ function showRemoveMessage(event, onChoice) {
   else if (event.quantity === 2) {
     msg.textContent = `You have 2 of ${event.Name}. Do you want to remove only one, both, or cancel?`;
     opts.innerHTML = `
-      <button id="removeOne">Remove One</button>
-      <button id="removeAll">Remove Both</button>
-      <button id="cancelRemove">Cancel</button>
+      <button id='removeOne'>Remove One</button>
+      <button id='removeAll'>Remove Both</button>
+      <button id='cancelRemove'>Cancel</button>
     `;
     initialFocus = document.getElementById('removeOne');
     document.getElementById('removeOne').onclick = () => {
@@ -79,10 +79,10 @@ function showRemoveMessage(event, onChoice) {
   else {
     msg.textContent = `You have ${event.quantity} of ${event.Name}. How many would you like to remove?`;
     opts.innerHTML = `
-      <input id="removeCount" type="number" min="1" max="${event.quantity}" value="1">
-      <button id="confirmRemove">Remove</button>
-      <button id="removeAll">Remove All</button>
-      <button id="cancelRemove">Cancel</button>
+      <input id='removeCount' type='number' min='1' max='${event.quantity}' value='1'>
+      <button id='confirmRemove'>Remove</button>
+      <button id='removeAll'>Remove All</button>
+      <button id='cancelRemove'>Cancel</button>
     `;
     initialFocus = document.getElementById('removeCount');
     const input = document.getElementById('removeCount');
@@ -242,8 +242,8 @@ function annotateLineDiscounts(cart) {
   if (!element) return;
   cart.forEach((item) => {
     const row =
-      element.querySelector(`.cart-item[data-id="${item.Id}"]`) ||
-      element.querySelector(`[data-id="${item.Id}"]`);
+      element.querySelector(`.cart-item[data-id='${item.Id}']`) ||
+      element.querySelector(`[data-id='${item.Id}']`);
     if (!row) return;
 
     const qty = Number(item?.quantity ?? 1) || 1;

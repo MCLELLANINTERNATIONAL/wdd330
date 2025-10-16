@@ -1,4 +1,4 @@
-import eventData from "../ExternalServices.mjs";
+import eventData from '../ExternalServices.mjs';
 // wrapper for querySelector...returns matching element
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
@@ -76,12 +76,12 @@ export async function loadTemplate(path) {
 }
 
 export async function loadHeaderFooter() {
-  const headerTemplate = await loadTemplate("../partials/header.html");
-  const headerElement = document.querySelector("#main-head");
+  const headerTemplate = await loadTemplate('../partials/header.html');
+  const headerElement = document.querySelector('#main-head');
   renderWithTemplate(headerTemplate, headerElement, updateCartBadge);
 
-  const footerTemplate = await loadTemplate("../partials/footer.html");
-  const footerElement = document.querySelector("#main-foot");
+  const footerTemplate = await loadTemplate('../partials/footer.html');
+  const footerElement = document.querySelector('#main-foot');
   renderWithTemplate(footerTemplate, footerElement);
 }
 
@@ -129,6 +129,6 @@ export function alertMessage(message, scroll = true) {
 }
 
 export function removeAllAlerts() {
-  const alerts = document.querySelectorAll(".alert");
-  alerts.forEach((alert) => document.querySelector("main").removeChild(alert));
+  const alerts = document.querySelectorAll('.alert');
+  alerts.forEach((alert) => document.querySelector('main').removeChild(alert));
 }

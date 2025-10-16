@@ -18,42 +18,42 @@ function venueBlock(ev) {
   const v = ev?.venue || {};
   const addrParts = [v.address, v.city, v.state, v.postalCode, v.country].filter(Boolean);
   const addr = addrParts.join(', ');
-  const map = v.mapUrl ? `<a href="${v.mapUrl}" target="_blank" rel="noopener">View map</a>` : '';
-  const dir = v.directionsUrl ? `<a href="${v.directionsUrl}" target="_blank" rel="noopener">Directions</a>` : '';
+  const map = v.mapUrl ? `<a href='${v.mapUrl}' target='_blank' rel='noopener'>View map</a>` : '';
+  const dir = v.directionsUrl ? `<a href='${v.directionsUrl}' target='_blank' rel='noopener'>Directions</a>` : '';
   const links = [map, dir].filter(Boolean).join(' · ');
   return `
-    <div class="pd-venue">
+    <div class='pd-venue'>
       <h4>Venue</h4>
       <p><strong>${v.name || ''}</strong></p>
       <p>${addr}</p>
-      ${links ? `<p class="links">${links}</p>` : ''}
+      ${links ? `<p class='links'>${links}</p>` : ''}
     </div>
   `;
 }
 
 function detailsHTML(ev) {
   const imgHTML = ev.image?.url
-    ? `<img id="eventImage" class="pd-img" src="${ev.image.url}" alt="${ev.name}" />`
+    ? `<img id='eventImage' class='pd-img' src='${ev.image.url}' alt='${ev.name}' />`
     : '';
   const classLine = classificationLine(ev);
   const whenLine  = ev.start ? formatWhen(ev) : '';
   const price     = priceLine(ev);
 
   return `
-    <article class="pd-card">
-      <div class="event-media">
+    <article class='pd-card'>
+      <div class='event-media'>
         ${imgHTML}
       </div>
-      <div class="pd-body">
+      <div class='pd-body'>
         <h1>${ev.name || 'Event'}</h1>
-        ${classLine ? `<p class="pd-class">${classLine}</p>` : ''}
-        ${whenLine ? `<p id="eventWhen" class="pd-when">${whenLine}</p>` : ''}
-        ${price ? `<p id="eventPrice" class="pd-price">${price}</p>` : ''}
-        ${ev.description ? `<p id="eventDesc" class="pd-desc">${ev.description}</p>` : ''}
+        ${classLine ? `<p class='pd-class'>${classLine}</p>` : ''}
+        ${whenLine ? `<p id='eventWhen' class='pd-when'>${whenLine}</p>` : ''}
+        ${price ? `<p id='eventPrice' class='pd-price'>${price}</p>` : ''}
+        ${ev.description ? `<p id='eventDesc' class='pd-desc'>${ev.description}</p>` : ''}
         ${venueBlock(ev)}
-        <div class="pd-actions">
-          <button id="addToCart" class="btn primary">Add to cart</button>
-          ${ev.url ? `<a class="btn ghost" href="${ev.url}" target="_blank" rel="noopener">Event page</a>` : ''}
+        <div class='pd-actions'>
+          <button id='addToCart' class='btn primary'>Add to cart</button>
+          ${ev.url ? `<a class='btn ghost' href='${ev.url}' target='_blank' rel='noopener'>Event page</a>` : ''}
         </div>
       </div>
     </article>
@@ -79,7 +79,7 @@ export default class eventDetails {
     }
 
     if (!this.src || !this.id) {
-      mount.innerHTML = `<p class="error">Missing event reference. Expected ?src=…&id=…</p>`;
+      mount.innerHTML = `<p class='error'>Missing event reference. Expected ?src=…&id=…</p>`;
       updateCartBadge();
       return;
     }
@@ -95,7 +95,7 @@ export default class eventDetails {
       // ensure badge correct on load
       updateCartBadge();
     } catch (e) {
-      mount.innerHTML = `<p class="error">Could not load event: ${e.message}</p>`;
+      mount.innerHTML = `<p class='error'>Could not load event: ${e.message}</p>`;
       updateCartBadge();
     }
   }
@@ -117,17 +117,17 @@ export function rendereventDetailsHTML(ev) {
   const href = `event_pages.html?src=${encodeURIComponent(ev.source)}&id=${encodeURIComponent(ev.id)}`;
 
   return `
-    <a href="${href}" class="event-card" aria-label="${ev.name}">
+    <a href='${href}' class='event-card' aria-label='${ev.name}'>
       <article>
-        <div class="thumb">
-          <img src="${ev.image?.url || ''}" alt="${ev.name || 'Event image'}" loading="lazy">
+        <div class='thumb'>
+          <img src='${ev.image?.url || ''}' alt='${ev.name || 'Event image'}' loading='lazy'>
         </div>
-        <div class="body">
+        <div class='body'>
           <h3>${ev.name || 'Untitled event'}</h3>
-          ${classLine ? `<p class="meta">${classLine}</p>` : ''}
-          ${when ? `<p class="when">${when}</p>` : ''}
-          ${ev.venue?.name ? `<p class="venue">${ev.venue.name}</p>` : ''}
-          ${price ? `<p class="price">${price}</p>` : ''}
+          ${classLine ? `<p class='meta'>${classLine}</p>` : ''}
+          ${when ? `<p class='when'>${when}</p>` : ''}
+          ${ev.venue?.name ? `<p class='venue'>${ev.venue.name}</p>` : ''}
+          ${price ? `<p class='price'>${price}</p>` : ''}
         </div>
       </article>
     </a>

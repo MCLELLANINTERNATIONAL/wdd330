@@ -1,6 +1,6 @@
 import { renderListWithTemplate, getParam } from './utils.mjs';
 import eventData from './ExternalServices.mjs';
-import eventDetails, { rendereventDetailsHTML } from './eventDetails.mjs';
+import eventDetails, { rendereventDetailsHTML } from './EventDetails.mjs';
 
 function eventCardTemplate(event) {
     // matches the structure in /index.html
@@ -15,21 +15,21 @@ function eventCardTemplate(event) {
         ? `$${event.FinalPrice.toFixed(2)}`
         : `$${event?.FinalPrice ?? '0.00'}`;
   
-    return `<li class="event-card">
-      <a href="${href}">
-        <p class="event-card__price">${price}</p>
+    return `<li class='event-card'>
+      <a href='${href}'>
+        <p class='event-card__price'>${price}</p>
         <img 
-          src="${event.Images.PrimaryMedium}" 
-          srcset="
+          src='${event.Images.PrimaryMedium}' 
+          srcset='
             ${event.Images.PrimarySmall} 80w,
             ${event.Images.PrimaryMedium} 160w
-          "
-          sizes="(max-width: 600px) 50vw, 160px"
-          alt="Image of ${name}">
-        <h2 class="card__brand">${brand}</h2>
-        <h3 class="card__name">${name}</h3>
+          '
+          sizes='(max-width: 600px) 50vw, 160px'
+          alt='Image of ${name}'>
+        <h2 class='card__brand'>${brand}</h2>
+        <h3 class='card__name'>${name}</h3>
       </a>
-      <button class="quick-view" data-id=${event.Id}>Quick View</button>
+      <button class='quick-view' data-id=${event.Id}>Quick View</button>
     </li>`;
 }
 
@@ -75,9 +75,9 @@ export default class eventList {
         const modal = document.createElement('div');
         modal.className = 'quick-view-modal';
         modal.innerHTML = `
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="modal-body">Loading event details...</div>
+          <div class='modal-content'>
+            <span class='close'>&times;</span>
+            <div class='modal-body'>Loading event details...</div>
           </div>
         `;
         card.appendChild(modal);

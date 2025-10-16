@@ -31,10 +31,10 @@ function formDataToJSON(formElement) {
 
   // Only add expiration if we have both parts
   if (exMonth && exYear) {
-    convertedJSON["expiration"] = `${exMonth}/${exYear}`;
+    convertedJSON['expiration'] = `${exMonth}/${exYear}`;
   }
 
-  convertedJSON["cardNumber"] = creditCard; 
+  convertedJSON['cardNumber'] = creditCard; 
 
   return convertedJSON;
 }
@@ -161,8 +161,8 @@ async function checkout(event) {
   try {
       const res = await services.checkout(order);
       console.log(res);
-      setLocalStorage("so-cart", []);
-      location.assign("./success.html");
+      setLocalStorage('so-cart', []);
+      location.assign('./success.html');
     } catch (err) {
       // get rid of any preexisting alerts.
       removeAllAlerts();
@@ -173,7 +173,7 @@ async function checkout(event) {
       console.log(err);
     }
 
-  //window.location.href = "../success/index.html";
+  //window.location.href = '../success/index.html';
 }
 
 const formElement = document.forms['checkout'];

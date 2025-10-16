@@ -1,8 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const visitsDisplay = document.querySelector(".visits");
-    const sidebarMessage = document.querySelector(".last-visit-message");
+document.addEventListener('DOMContentLoaded', () => {
+    const visitsDisplay = document.querySelector('.visits');
+    const sidebarMessage = document.querySelector('.last-visit-message');
 
-    let numVisits = Number(localStorage.getItem("numVisits")) || 0;
+    let numVisits = Number(localStorage.getItem('numVisits')) || 0;
 
     if (numVisits !== 0) {
         visitsDisplay.textContent = `${numVisits}`;
@@ -11,13 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     numVisits++;
-    localStorage.setItem("numVisits", numVisits);
+    localStorage.setItem('numVisits', numVisits);
 
     const currentDate = new Date();
-    const lastVisit = localStorage.getItem("lastVisitDate");
+    const lastVisit = localStorage.getItem('lastVisitDate');
 
     if (!lastVisit) {
-        sidebarMessage.textContent = "Welcome! Let us know if you have any questions.";
+        sidebarMessage.textContent = 'Welcome! Let us know if you have any questions.';
     } else {
         const lastVisitDate = new Date(lastVisit);
         const diffTime = currentDate - lastVisitDate;
@@ -43,5 +43,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    localStorage.setItem("lastVisitDate", currentDate.toISOString());
+    localStorage.setItem('lastVisitDate', currentDate.toISOString());
 });

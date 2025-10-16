@@ -32,7 +32,7 @@ function cartItemTemplate(item) {
    item?.Images?.PrimarySmall ||
    item?.Images?.PrimaryLarge ||
    '';
- const alt = item?.Name ?? "event";
+ const alt = item?.Name ?? 'event';
   
   
   return `

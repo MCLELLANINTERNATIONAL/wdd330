@@ -1,5 +1,5 @@
 // fly-to-cart.js
-export function flyToCart({ imageUrl, fromEl, cartSelector = ".js-cart-btn", duration = 700 } = {}) {
+export function flyToCart({ imageUrl, fromEl, cartSelector = '.js-cart-btn', duration = 700 } = {}) {
     const cartEl = document.querySelector(cartSelector);
     if (!cartEl || (!fromEl && !imageUrl)) return;
   
@@ -12,18 +12,18 @@ export function flyToCart({ imageUrl, fromEl, cartSelector = ".js-cart-btn", dur
     const endX = endRect.left + endRect.width / 2;
     const endY = endRect.top + endRect.height / 2;
   
-    const img = document.createElement("img");
-    img.src = imageUrl || (fromEl?.src ?? "");
-    img.alt = "";
-    img.style.position = "fixed";
+    const img = document.createElement('img');
+    img.src = imageUrl || (fromEl?.src ?? '');
+    img.alt = '';
+    img.style.position = 'fixed';
     img.style.left = `${startX - 24}px`;
     img.style.top = `${startY - 24}px`;
-    img.style.width = "48px";
-    img.style.height = "48px";
-    img.style.objectFit = "cover";
-    img.style.borderRadius = "8px";
-    img.style.zIndex = "9999";
-    img.style.pointerEvents = "none";
+    img.style.width = '48px';
+    img.style.height = '48px';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '8px';
+    img.style.zIndex = '9999';
+    img.style.pointerEvents = 'none';
     img.style.transition = `transform ${duration}ms cubic-bezier(.22,.61,.36,1), opacity ${duration}ms ease`;
   
     document.body.appendChild(img);
@@ -33,7 +33,7 @@ export function flyToCart({ imageUrl, fromEl, cartSelector = ".js-cart-btn", dur
   
     requestAnimationFrame(() => {
       img.style.transform = `translate(${dx}px, ${dy}px) scale(0.3)`;
-      img.style.opacity = "0.2";
+      img.style.opacity = '0.2';
     });
   
     window.setTimeout(() => {
