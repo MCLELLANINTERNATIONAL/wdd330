@@ -1,4 +1,4 @@
-// events.js — Edinburgh Events (Ticketmaster + Eventbrite)
+// Edinburgh Events (Ticketmaster + Eventbrite)
 // --------------------------------------------------------
 // Keys/tokens:
 const TM_KEY = 'HGiBZ5JTwATOOhB0kIGZWXAgCXwrglXq';           // Ticketmaster API key

@@ -1,5 +1,5 @@
-// event.js — SINGLE EVENT DETAILS
-import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from '../events.js';
+// eventapi.js — SINGLE EVENT DETAILS
+import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from '../eventsApi.js';
 import { flyToCart } from '../flyToCart.js';
 import { updateCartBadge, getParam, loadHeaderFooter } from '../utils.mjs';
 
