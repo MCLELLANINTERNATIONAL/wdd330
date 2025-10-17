@@ -1248,6 +1248,19 @@ footer p {
     padding: 1rem;
 }
 
+.filter-sidebar {
+    position: static;
+    transform: translateX(0);
+    width: 380px;
+    height: auto;
+    max-width: none;
+    box-shadow: none;
+    border: 1px solid var(--ee-gray-50);
+    border-radius: 8px;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+}
+
 .filter-sidebar.open {
     transform: translateX(0);
 }
