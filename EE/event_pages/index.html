@@ -1,52 +1,40 @@
 <!doctype html>
-
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EE | Edinburgh Entertainment | Event</title>
 
-  <title>EE| Edinburgh Entertainment | Event Name</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <!-- CSS -->
   <link rel="stylesheet" href="../styles/normalize.css">
   <link rel="stylesheet" href="../styles/base.css">
   <link rel="stylesheet" href="../styles/larger.css">
+
+  <!-- Core JS (partials, nav, breadcrumb) -->
   <script src="../js/getDates.js" type="module" defer></script>
   <script src="../js/hamButton.js" type="module" defer></script>
   <script src="../js/breadcrumb.js" type="module" defer></script>
+
   <script src="../js/main.js" type="module" defer></script>
   <script src="../js/EventDetails.mjs" type="module" defer></script>
-  <script src="../utils.mjs" type="module" defer></script>
-  <script src="../event.js" type="module" deer></script>
-  <script src="../js/event.js" type="module" defer></script>
   <script src="../flyToCart.js" type="module" derfer></script>
-
 </head>
-
 <body>
-  <div id="main-head"></div>
+  <header id="main-head"></header>
+
   <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
+
   <main class="divider">
-    <section class="event-detail">
-      <h2></h2>
-      <h3 class="divider"></h3>
-      <img src="" alt="" id="eventImage" class="divider" />
-      <p id="eventPrice" class="event-card__price"></p>
-      <p id="eventColor" class="event__color"></p>
-      <p id="eventDesc" class="event__description">
-        Description<br />
-      </p>
-      <div class="event-detail__add">
-        <button id="addToCart" data-id="eventId">Add to Cart</button>
-      </div>
-    </section>
+    <!-- The detail script will render everything inside this element -->
+    <section id="event-detail" class="event-detail"></section>
   </main>
+
   <footer id="main-foot"></footer>
+
+  <!-- Load header/footer partials -->
   <script type="module">
     import { loadHeaderFooter } from '../js/utils.mjs';
     loadHeaderFooter();
   </script>
 </body>
-
 </html>

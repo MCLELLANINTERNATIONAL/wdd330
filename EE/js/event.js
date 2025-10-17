@@ -1,7 +1,14 @@
 // Event SINGLE EVENT DETAILS
-import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from '../eventsApi.js';
-import { flyToCart } from '../flyToCart.js';
-import { updateCartBadge, getParam, loadHeaderFooter } from '../utils.mjs';
+// Supports BOTH ?key=source:id and ?src=&id=
+import {
+  fetchEventBySourceAndId,
+  fetchEventsByCategory,
+  addToCart,
+  formatWhen,
+  classificationLine
+} from '../js/api.mjs';
+import { flyToCart } from '../js/flyToCart.js';
+import { updateCartBadge, getParam, loadHeaderFooter } from '../js/utils.mjs';
 
 loadHeaderFooter();
 
@@ -16,7 +23,7 @@ function priceLine(ev) {
     return `${p.min}–${p.max} ${p.currency || ''}`.trim();
   }
   if (p.min != null) return `From ${p.min} ${p.currency || ''}`.trim();
-  return '';
+  return '—';
 }
 
 function venueBlock(ev) {
@@ -25,12 +32,13 @@ function venueBlock(ev) {
   const addr = addrParts.join(', ');
   const map = v.mapUrl ? `<a href='${v.mapUrl}' target='_blank' rel='noopener'>View map</a>` : '';
   const dir = v.directionsUrl ? `<a href='${v.directionsUrl}' target='_blank' rel='noopener'>Directions</a>` : '';
+  const links = [map, dir].filter(Boolean).join(' · ');
   return `
     <div class='pd-venue'>
       <h4>Venue</h4>
       <p><strong>${v.name || ''}</strong></p>
       <p>${addr}</p>
-      <p class='links'>${[map, dir].filter(Boolean).join(' · ')}</p>
+      ${links ? `<p class='links'>${links}</p>` : ''}
     </div>
   `;
 }
@@ -66,8 +74,9 @@ function render(ev) {
   const imgEl = root.querySelector('.js-pd-img');
 
   btn?.addEventListener('click', () => {
-    addToCart(ev, 1);                                // updates storage + fires 'cart:updated'
-    flyToCart({ imageUrl: ev.image?.url, fromEl: imgEl }); // animation to header cart
+    addToCart(ev, 1);
+    flyToCart({ imageUrl: ev.image?.url, fromEl: imgEl });
+    updateCartBadge();
 
     btn.textContent = 'Added!';
     btn.disabled = true;
@@ -82,18 +91,46 @@ function renderError(msg) {
   root.innerHTML = `<p class='error'>${msg}</p>`;
 }
 
-async function init() {
-  // expects event.html?src={ticketmaster|eventbrite}&id={EVENT_ID}
-  const src = getParam('src');
-  const id = getParam('id');
+async function lookupByKey(keyStr) {
+  // Fallback discover: pull all categories once and find the event
+  const cats = ['music', 'theatre', 'sport', 'cinema'];
+  const results = await Promise.allSettled(cats.map(c => fetchEventsByCategory(c)));
+  const all = results.flatMap(r => (r.status === 'fulfilled' ? r.value : []));
+  return all.find(e => `${e.source}:${e.id}` === keyStr) || null;
+}
 
-  if (!src || !id) {
-    renderError('Missing event reference. Expected ?src=…&id=…');
+async function init() {
+  if (!root) {
+    console.error('event.js: #pd-root not found');
     return;
   }
 
+  root.innerHTML = `<div class="event-card__body skel">Loading…</div>`;
+
   try {
-    const ev = await fetchEventBySourceAndId(src, id);
+    // Support both styles:
+    //   ?src=ticketmaster&id=EVENT_ID
+    //   ?key=ticketmaster:EVENT_ID
+    const src = getParam('src');
+    const id = getParam('id');
+    const key = getParam('key');
+
+    let ev = null;
+
+    if (src && id) {
+      ev = await fetchEventBySourceAndId(src, id);
+    } else if (key) {
+      ev = await lookupByKey(key);
+    } else {
+      renderError('Missing event reference. Use ?src=…&id=… or ?key=source:id');
+      return;
+    }
+
+    if (!ev) {
+      renderError('Event not found.');
+      return;
+    }
+
     render(ev);
   } catch (e) {
     renderError(`Could not load event: ${e.message}`);
@@ -101,7 +138,6 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateCartBadge();  // header badge init
-  init();             // load and paint event
+  updateCartBadge();
+  init();
 });
-

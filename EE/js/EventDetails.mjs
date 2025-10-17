@@ -1,135 +1,151 @@
-// eventDetails.mjs — EVENTS version (Ticketmaster + Eventbrite)
-import { fetchEventBySourceAndId, addToCart, formatWhen, classificationLine } from './api.mjs';
-import { getLocalStorage, setLocalStorage, updateCartBadge, bounceCartIcon, getParam } from './utils.mjs';
+// EventDetails.mjs — Unified Event Detail loader
+// Supports ?key=source:id or ?src=&id=
+// Expects a mount element: <section id="event-detail"></section>
 
-// ---- helpers ----
-function priceLine(ev) {
-    const p = ev?.price || {};
-    if (p.type === 'free') return 'Free';
-    if (p.min != null && p.max != null) {
-        if (p.min === p.max) return `${p.min} ${p.currency || ''}`.trim();
-        return `${p.min}–${p.max} ${p.currency || ''}`.trim();
-    }
-    if (p.min != null) return `From ${p.min} ${p.currency || ''}`.trim();
-    return '';
+import {
+  fetchEventsByCategory,
+  addToCart,
+  formatWhen,
+  classificationLine,
+} from './js/api.mjs';
+
+// ---- DOM target
+const root = document.getElementById('event-detail');
+
+// ---- URL params
+const urlParams = new URLSearchParams(location.search);
+const keyParam = urlParams.get('key'); // `${source}:${id}`
+const srcParam = urlParams.get('src'); // "ticketmaster" | "eventbrite"
+const idParam  = urlParams.get('id');  // event id
+
+// ---- helpers ----------------------------------------------------
+function updateCartBadgeFromStorage() {
+  try {
+    const items = JSON.parse(localStorage.getItem('ee_cart') || '[]');
+    const count = items.reduce((sum, it) => sum + (Number(it.qty) || 0), 0);
+    const badge = document.getElementById('cart-badge');
+    if (badge) badge.textContent = String(count);
+  } catch {
+    /* no-op */
+  }
 }
 
-function venueBlock(ev) {
-    const v = ev?.venue || {};
-    const addrParts = [v.address, v.city, v.state, v.postalCode, v.country].filter(Boolean);
-    const addr = addrParts.join(', ');
-    const map = v.mapUrl ? `<a href='${v.mapUrl}' target='_blank' rel='noopener'>View map</a>` : '';
-    const dir = v.directionsUrl ? `<a href='${v.directionsUrl}' target='_blank' rel='noopener'>Directions</a>` : '';
-    const links = [map, dir].filter(Boolean).join(' · ');
-    return `
-    <div class='pd-venue'>
-      <h4>Venue</h4>
-      <p><strong>${v.name || ''}</strong></p>
-      <p>${addr}</p>
-      ${links ? `<p class='links'>${links}</p>` : ''}
+function priceLine(ev) {
+  const p = ev?.price || {};
+  if (p.type === 'free') return 'Free';
+  const cur = p.currency || '';
+  const fmt = (n) => (n != null ? String(n) : null);
+
+  if (p.min != null && p.max != null) {
+    if (p.min === p.max) return `${cur} ${fmt(p.min)}`.trim();
+    return `${cur} ${fmt(p.min)}–${fmt(p.max)}`.trim();
+  }
+  if (p.min != null) return `From ${cur} ${fmt(p.min)}`.trim();
+  return '—';
+}
+
+function venueLinks(v = {}) {
+  const links = [];
+  if (v.mapUrl) links.push(
+    `<a class="btn btn--ghost" href="${v.mapUrl}" target="_blank" rel="noopener">Map</a>`
+  );
+  if (v.directionsUrl) links.push(
+    `<a class="btn btn--ghost" href="${v.directionsUrl}" target="_blank" rel="noopener">Directions</a>`
+  );
+  return links.join('\n');
+}
+
+function render(ev) {
+  const img = ev.image?.url || '../images/placeholder-16x9.png';
+  const price = priceLine(ev);
+  const meta = classificationLine(ev) || '';
+  const when = ev.start ? formatWhen(ev) : '';
+  const where = [ev.venue?.name, ev.venue?.city].filter(Boolean).join(' • ');
+
+  root.innerHTML = `
+    <img class="event-card__img" src="${img}" alt="${ev.name}">
+    <div class="event-card__body">
+      <span class="event-card__badge">${ev.category}</span>
+      <h2 class="event-card__title">${ev.name}</h2>
+      ${meta ? `<div class="event-card__meta">${meta}</div>` : ''}
+      ${when ? `<p class="event-card__when">${when}</p>` : ''}
+      ${where ? `<p class="event-card__where">${where}</p>` : ''}
+      <p class="event-card__price">${price}</p>
+
+      <div class="event-card__actions">
+        <button id="add" class="btn">Add to cart</button>
+        ${ev.url ? `<a class="btn btn--ghost" href="${ev.url}" target="_blank" rel="noopener">Official Page</a>` : ''}
+        ${venueLinks(ev.venue)}
+      </div>
+
+      ${ev.description ? `<p style="margin-top:.75rem">${ev.description}</p>` : ''}
     </div>
   `;
+
+  document.getElementById('add')?.addEventListener('click', () => {
+    try {
+      addToCart(ev, 1);
+      updateCartBadgeFromStorage();
+      const cart = document.querySelector('.cart-btn');
+      if (cart) {
+        cart.classList.add('bump');
+        setTimeout(() => cart.classList.remove('bump'), 300);
+      }
+    } catch (err) {
+      console.error('Add to cart failed:', err);
+      alert('Sorry, could not add to cart.');
+    }
+  });
 }
 
-function detailsHTML(ev) {
-    const imgHTML = ev.image?.url
-        ? `<img id='eventImage' class='pd-img' src='${ev.image.url}' alt='${ev.name}' />`
-        : '';
-    const classLine = classificationLine(ev);
-    const whenLine = ev.start ? formatWhen(ev) : '';
-    const price = priceLine(ev);
-
-    return `
-    <article class='pd-card'>
-      <div class='event-media'>
-        ${imgHTML}
-      </div>
-      <div class='pd-body'>
-        <h1>${ev.name || 'Event'}</h1>
-        ${classLine ? `<p class='pd-class'>${classLine}</p>` : ''}
-        ${whenLine ? `<p id='eventWhen' class='pd-when'>${whenLine}</p>` : ''}
-        ${price ? `<p id='eventPrice' class='pd-price'>${price}</p>` : ''}
-        ${ev.description ? `<p id='eventDesc' class='pd-desc'>${ev.description}</p>` : ''}
-        ${venueBlock(ev)}
-        <div class='pd-actions'>
-          <button id='addToCart' class='btn primary'>Add to cart</button>
-          ${ev.url ? `<a class='btn ghost' href='${ev.url}' target='_blank' rel='noopener'>Event page</a>` : ''}
-        </div>
-      </div>
-    </article>
-  `;
+// ---- data loaders -----------------------------------------------
+async function findEventByKey(keyStr) {
+  const cats = ['music','theatre','sport','cinema'];
+  const results = await Promise.allSettled(cats.map(c => fetchEventsByCategory(c)));
+  const all = results.flatMap(r => (r.status === 'fulfilled' ? r.value : []));
+  return all.find(e => `${e.source}:${e.id}` === keyStr) || null;
 }
 
-export default class eventDetails {
-    constructor() {
-        this.event = null;
-        this.src = null;
-        this.id = null;
+async function findEventBySrcId(src, id) {
+  const cats = ['music','theatre','sport','cinema'];
+  const results = await Promise.allSettled(cats.map(c => fetchEventsByCategory(c)));
+  const all = results.flatMap(r => (r.status === 'fulfilled' ? r.value : []));
+  return all.find(e => e.source === src && String(e.id) === String(id)) || null;
+}
+
+// ---- init --------------------------------------------------------
+async function init() {
+  if (!root) {
+    console.error('EventDetails.mjs: #event-detail not found');
+    return;
+  }
+
+  root.innerHTML = `<div class="event-card__body skel">Loading…</div>`;
+
+  try {
+    let ev = null;
+
+    if (keyParam) {
+      ev = await findEventByKey(keyParam);
+    } else if (srcParam && idParam) {
+      ev = await findEventBySrcId(srcParam, idParam);
+    } else {
+      root.innerHTML = `<div class="event-card__body"><p>Missing event reference. Use <code>?key=source:id</code> or <code>?src=&id=</code>.</p></div>`;
+      return;
     }
 
-    async init() {
-        // Expect event_pages.html?src={ticketmaster|eventbrite}&id={EVENT_ID}
-        this.src = getParam('src');
-        this.id = getParam('id');
-
-        const mount = document.querySelector('#pd-root');
-        if (!mount) {
-            console.error('eventDetails: #pd-root not found');
-            return;
-        }
-
-        if (!this.src || !this.id) {
-            mount.innerHTML = `<p class='error'>Missing event reference. Expected ?src=…&id=…</p>`;
-            updateCartBadge();
-            return;
-        }
-
-        try {
-            this.event = await fetchEventBySourceAndId(this.src, this.id);
-            mount.innerHTML = detailsHTML(this.event);
-
-            // wire Add to cart
-            const btn = document.getElementById('addToCart');
-            btn?.addEventListener('click', () => this.addeventToCart());
-
-            // ensure badge correct on load
-            updateCartBadge();
-        } catch (e) {
-            mount.innerHTML = `<p class='error'>Could not load event: ${e.message}</p>`;
-            updateCartBadge();
-        }
+    if (!ev) {
+      root.innerHTML = `<div class="event-card__body"><p>Event not found.</p></div>`;
+      return;
     }
 
-    addeventToCart() {
-        // Reuse your existing localStorage utils if you still need them elsewhere,
-        // but for events we’ll use the unified cart in events.js so everything stays consistent.
-        addToCart(this.event, 1);
-        updateCartBadge();
-        bounceCartIcon();
-    }
+    render(ev);
+  } catch (err) {
+    console.error(err);
+    root.innerHTML = `<div class="event-card__body"><p>Error: ${err.message}</p></div>`;
+  }
 }
 
-// Optional: card HTML for listings that link to event_pages.html
-export function rendereventDetailsHTML(ev) {
-    const price = priceLine(ev);
-    const when = ev.start ? formatWhen(ev) : '';
-    const classLine = classificationLine(ev);
-    const href = `event_pages.html?src=${encodeURIComponent(ev.source)}&id=${encodeURIComponent(ev.id)}`;
+init();
+updateCartBadgeFromStorage();
 
-    return `
-    <a href='${href}' class='event-card' aria-label='${ev.name}'>
-      <article>
-        <div class='thumb'>
-          <img src='${ev.image?.url || ''}' alt='${ev.name || 'Event image'}' loading='lazy'>
-        </div>
-        <div class='body'>
-          <h3>${ev.name || 'Untitled event'}</h3>
-          ${classLine ? `<p class='meta'>${classLine}</p>` : ''}
-          ${when ? `<p class='when'>${when}</p>` : ''}
-          ${ev.venue?.name ? `<p class='venue'>${ev.venue.name}</p>` : ''}
-          ${price ? `<p class='price'>${price}</p>` : ''}
-        </div>
-      </article>
-    </a>
-  `;
-}

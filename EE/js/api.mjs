@@ -1,4 +1,3 @@
-// js/api.js
 // ========================================================
 //  Edinburgh Entertainment — Unified API + Cart Module
 //  Ticketmaster + Eventbrite + Local Cart storage
@@ -20,6 +19,9 @@ const nowISO = () => new Date().toISOString();
 const toNum = (x) => (x == null ? null : Number(x));
 const clean = (s) => (typeof s === 'string' ? s.trim() : '');
 const ensureHttps = (u) => (typeof u === 'string' ? u.replace(/^http:\/\//i, 'https://') : u);
+
+// Fallback image that resolves correctly from ANY page (relative to this module)
+const FALLBACK_IMG = new URL('../images/placeholder-16x9.png', import.meta.url).toString();
 
 const mapUrl = (lat, lon, label = '') =>
   lat && lon
@@ -109,7 +111,7 @@ function normalizeTM(ev, category) {
     end: ev.dates?.end?.dateTime || null,
     image: img
       ? { url: img.url, width: toNum(img.width), height: toNum(img.height) }
-      : { url: 'images/placeholder.png', width: null, height: null }, // <-- final fallback
+      : { url: FALLBACK_IMG, width: null, height: null }, // robust fallback
     price: {
       type: price.type || '',
       currency: price.currency || '',
@@ -170,7 +172,7 @@ function normalizeEB(ev) {
   const maxp = ta.maximum_ticket_price || {};
 
   const logo = ev.logo || {};
-  const imgUrl = ensureHttps(logo.original?.url || logo.url || 'images/placeholder.png');
+  const imgUrl = ensureHttps(logo.original?.url || logo.url || FALLBACK_IMG);
 
   return {
     id: String(ev.id),
@@ -360,11 +362,37 @@ export function artistLine(ev) {
   return Array.isArray(ev.artists) && ev.artists.length ? ev.artists.join(' • ') : '';
 }
 
+// Fetch a single event directly by source + id (faster than scanning)
+export async function fetchEventBySourceAndId(source, id) {
+  const src = String(source || '').toLowerCase();
+  const safeId = encodeURIComponent(String(id));
 
+  if (src === 'ticketmaster') {
+    // TM has an event-by-id endpoint
+    const raw = buildUrl(`${TM_API}/events/${safeId}.json`, { apikey: TM_KEY });
+    const proxied = CORS_PROXY + encodeURIComponent(raw);
+    const data = await fetchJson(proxied, { __label: 'Ticketmaster Event' });
 
+    // Try to infer our category from the segment name
+    const seg = data?.classifications?.[0]?.segment?.name?.toLowerCase() || '';
+    let category = 'events';
+    if (seg.includes('music')) category = 'music';
+    else if (seg.includes('arts') || seg.includes('theatre')) category = 'theatre';
+    else if (seg.includes('sport')) category = 'sport';
 
+    return normalizeTM(data, category);
+  }
 
+  if (src === 'eventbrite') {
+    // Expand venue + ticket_availability for better normalization
+    const raw = `${EB_API}/events/${safeId}/?expand=venue,ticket_availability,category`;
+    const proxied = CORS_PROXY + encodeURIComponent(raw);
+    const data = await fetchJson(proxied, {
+      __label: 'Eventbrite Event',
+      headers: { Authorization: `Bearer ${EB_TOKEN}` },
+    });
+    return normalizeEB(data);
+  }
 
-
-
-
+  throw new Error('Unknown source (use "ticketmaster" or "eventbrite")');
+}
