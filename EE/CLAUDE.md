@@ -137,7 +137,7 @@ VITE_EVENTBRITE_TOKEN=your_eventbrite_token_here
 **Files using environment variables:**
 - `ExternalServices.mjs` (line 17) - VITE_TICKETMASTER_API_KEY
 - `ticketmaster.js` - VITE_TICKETMASTER_API_KEY
-- `eventdata1.js` - VITE_EVENTBRITE_TOKEN
+- `eventdata.js` - VITE_EVENTBRITE_TOKEN
 
 ## Known Issues & Quirks
 
