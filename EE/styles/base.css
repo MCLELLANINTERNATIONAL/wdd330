@@ -71,15 +71,22 @@ header {
 }
 
 #menu {
+    position: absolute;
+    top: clamp(8px, 2vw, 16px);
+    right: var(--edge-pad);
+    /* EXACTLY aligns with search bar end */
+    width: var(--burger-w);
+    height: var(--burger-w);
     display: block;
-    font-size: 2rem;
-    font-weight: bolder;
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-weight: 800;
     text-decoration: none;
     border: 0;
     background: none;
     color: #fff;
-    position: absolute;
     cursor: pointer;
+    line-height: 1;
+    z-index: 10001;
 }
 
 #menu::before {
