@@ -1,66 +1,63 @@
 <!doctype html>
 
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
 
-    <title>Sleep Outside | Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="/css/style.css" />
+  <title>Sleep Outside | Cart</title>
 
-    <script src="../js/main.js" type="module"></script>
-    <script src="../js/cart.js" type="module"></script>
-    <script src="../js/breadcrumb.js" type="module"></script>
-  </head>
+  <link rel="stylesheet" href="/css/style.css" />
 
-  <body>
-    <header class="divider" id="main-head"></header>
-    <div class="search-bar" id="mobile-search">
-      <label for="item-search">Search Event Listings:</label>
-      <input id="item-search" type="text" placeholder="Search Products..." />
-      <button id="search-button">Search</button>
+  <script src="../js/main.js" type="module"></script>
+  <script src="../js/cart.js" type="module"></script>
+  <script src="../js/breadcrumb.js" type="module"></script>
+</head>
+
+<body>
+  <header class="divider" id="main-head"></header>
+  <div class="search-bar" id="mobile-search">
+    <label for="item-search">Search Event Listings:</label>
+    <input id="item-search" type="text" placeholder="Search Products..." />
+    <button id="search-button">Search</button>
+  </div>
+  <div id="modalOverlay" class="modal-overlay hide"></div>
+  <div id="removeDialog" class="modal-dialog hide" role="dialog" aria-modal="true"
+    aria-labelledby="RemoveFromCartMessage">
+    <div id="dialog-content">
+      <h3 id="dialogTitle"></h3>
+      <div id="dialog-message"></div>
+      <div id="dialog-options"></div>
     </div>
-    <div id="modalOverlay" class="modal-overlay hide"></div>
-    <div
-      id="removeDialog"
-      class="modal-dialog hide"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="RemoveFromCartMessage"
-    >
-      <div id="dialog-content">
-        <h3 id="dialogTitle"></h3>
-        <div id="dialog-message"></div>
-        <div id="dialog-options"></div>
-      </div>
-    </div>
-    <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
-    <main class="divider">
-      <section class="products">
-        <h2>My Cart</h2>
+  </div>
+  <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
+  <main class="divider">
+    <section class="products">
+      <h2>Cart</h2>
 
-        <ul class="product-list" data-category="Cart"></ul>
+      <ul class="product-list" data-category="Cart"></ul>
 
-        <div class="cart-footer hide" id="cart-footer">
-          <div>
-            <p class="cart-total">
-              Subtotal: <span id="cart-total">$0.00</span>
-            </p>
-            <p class="cart-discount">
-              Discount: - <span id="cart-discount">- $0.00</span>
-            </p>
-            <p class="cart-final">
-              Final Total: <span id="cart-final">$0.00</span>
-            </p>
-            <button id="clear-cart-btn">Clear Cart</button>
-            <button id="checkout-btn">Proceed to Checkout</button>
-          </div>
+      <div class="cart-footer hide" id="cart-footer">
+        <div>
+          <p class="cart-total">
+            Subtotal: <span id="cart-total">$0.00</span>
+          </p>
+          <p class="cart-discount">
+            Discount: - <span id="cart-discount">- $0.00</span>
+          </p>
+          <p class="cart-final">
+            Final Total: <span id="cart-final">$0.00</span>
+          </p>
+          <button id="clear-cart-btn">Clear Cart</button>
+          <button id="checkout-btn">Proceed to Checkout</button>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <footer id="main-foot"></footer>
-  </body>
+  <footer id="main-foot"></footer>
+</body>
+
 </html>

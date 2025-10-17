@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <p>We've saved your details. Check your email for confirmation.</p>
       <div class="success-actions" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
         <a href="../index.html" class="cta-button" style="text-align: center;">Browse Events</a>
-        <a href="../cart/index.html" class="cta-button" style="text-align: center;">View My Cart</a>
+        <a href="../cart/index.html" class="cta-button" style="text-align: center;">View Cart</a>
         <a href="../my_events/index.html" class="cta-button" style="text-align: center;">My Saved Events</a>
       </div>
     `;
