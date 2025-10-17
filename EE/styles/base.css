@@ -17,6 +17,11 @@
     /* Black: text */
     --ee-gray-50: #F3F4F6;
     /* Light grey: borders/bg */
+    --edge-pad: clamp(10px, 3vw, 5%);
+    /* used by BOTH search bar + burger */
+    --burger-w: clamp(36px, 3vw, 44px);
+    /* visual width of the ☰ hit area */
+    --gap: clamp(6px, 2vw, 12px);
 }
 
 /* === BASE === */
