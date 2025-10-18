@@ -47,8 +47,8 @@ header {
     color: var(--ee-green-2);
     font-weight: bolder;
     font-size: 1rem;
-    padding: 15px 20px;
-    gap: clamp(1rem, 6vw, 5rem);
+    padding: 10px 20px;
+    gap: clamp(0.8rem, 6vw, 4rem);
 }
 
 header img {
@@ -1513,5 +1513,71 @@ footer p {
 
     .icons:hover {
         transform: none !important;
+    }
+}
+
+/* ===== Mobile: cart drops under search, badge stays on the corner ===== */
+@media (max-width: 640px) {
+    header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    header h1 {
+        order: 2;
+    }
+
+    /* Search bar takes its own row, right-aligned */
+    .search-bar {
+        order: 4;
+        flex: 1 1 100%;
+        margin-left: auto;
+        margin-right: var(--edge-pad);
+        margin-top: clamp(4px, 2vw, 4px);
+        max-width: 100%;
+    }
+
+    /* Cart sits UNDER the search bar, right-aligned */
+    header .cart-btn {
+        order: 2;
+        display: inline-flex !important;
+
+        /* KEY: stay positioned for the badge anchor, but not absolutely pinned */
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+    }
+
+    /* Badge remains on the cart button's corner (same as desktop) */
+    #cart-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: #e53935;
+        color: #fff;
+        font: 700 15px/22px 'Montserrat', sans-serif;
+        text-align: center;
+        z-index: 1;
+    }
+
+    /* Hamburger keeps aligning with the search bar's right edge */
+    #menu {
+        position: absolute;
+        top: clamp(35px, 2vw, 16px);
+        right: var(--edge-pad);
+        z-index: 10010;
+    }
+
+    /* Mobile nav sits below burger/cart; won't cover them */
+    .navigation,
+    .navigation.show {
+        position: relative;
+        z-index: 9991;
     }
 }
