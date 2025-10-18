@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Sleep Outside | Product Make and Name</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <script src="../js/main.js" type="module" defer></script>
+    <script src="../js/product.js" type="module"></script>
+    <script src="../js/breadcrumb.js" type="module"></script>
+  </head>
+
+  <body>
+    <header class="divider" id="main-head"></header>
+    <div class="search-bar" id="mobile-search">
+      <label for="item-search">Search our Outdoor Listings:</label>
+      <input id="item-search" type="text" placeholder="Search Products..." />
+      <button id="search-button">Search</button>
+    </div>
+    <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
+    <main class="divider">
+      <section class="product-detail">
+        <h2></h2>
+        <h3 class="divider"></h3>
+        <img src="" alt="" id="productImage" class="divider" />
+        <p id="productPrice" class="product-card__price"></p>
+        <p id="productColor" class="product__color"></p>
+        <p id="productDesc" class="product__description">
+          Description<br />10% Discount:
+        </p>
+        <div class="product-detail__add">
+          <button id="addToCart" data-id="productId">Add to Cart</button>
+        </div>
+      </section>
+    </main>
+    <footer id="main-foot"></footer>
+  </body>
+</html>

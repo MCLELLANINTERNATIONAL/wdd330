@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleep Outside | Registration for the Raffle</title>
+    <link rel="stylesheet" href="../css/register.css" />
+  </head>
+
+  <body>
+    <header class="divider" id="main-head"></header>
+
+    <main class="divider">
+      <div class="form-container">
+        <form id="registration-form">
+          <h2>Enter the Giveaway!</h2>
+          <p>
+            Fill in your details for a chance to win a complete camping kit.
+          </p>
+
+          <div class="form-group">
+            <label for="name">Full Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Your name here"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your.email@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone (WhatsApp):</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="(000)000-0000"
+              required
+            />
+          </div>
+
+          <button type="submit" class="submit-btn">Register Now</button>
+        </form>
+
+        <div id="success-message" class="hidden">
+          <h2>✅ Registered successfully!</h2>
+          <p>Thank you for signing up. Good luck in the draw!</p>
+        </div>
+      </div>
+    </main>
+
+    <footer id="main-foot"></footer>
+
+    <script src="../js/register.js" type="module"></script>
+  </body>
+</html>
