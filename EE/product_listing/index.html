@@ -1,150 +1,227 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EE | Edinburgh Entertainment</title>
+    <link rel="stylesheet" href="../styles/normalize.css" />
+    <link rel="stylesheet" href="../styles/base.css" />
+    <link rel="stylesheet" href="../styles/larger.css" />
+    <script src="../js/main.js" type="module" defer></script>
+    <script src="../js/product-listing.js" type="module"></script>
+    <script src="../js/getDates.js" type="module" defer></script>
+    <script src="../js/hamButton.js" type="module" defer></script>
+    <script src="../js/breadcrumb.js" type="module" defer></script>
+    <script src="../js/ticketmaster.js" type="module" defer></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EE | Edinburgh Entertainment</title>
-  <link rel="stylesheet" href="../styles/normalize.css">
-  <link rel="stylesheet" href="../styles/base.css">
-  <link rel="stylesheet" href="../styles/larger.css">
-  <script src="../js/main.js" type="module" defer></script>
-  <script src="../js/product-listing.js" type="module"></script>
-  <script src="../js/getDates.js" type="module" defer></script>
-  <script src="../js/hamButton.js" type="module" defer></script>
-  <script src="../js/breadcrumb.js" type="module" defer></script>
-  <script src="../js/ticketmaster.js" type="module" defer></script>
-</head>
+  <body>
+    <header>
+      <img
+        src="../images/logo.png"
+        alt="EE"
+        loading="lazy"
+        width="80"
+        height="80"
+      />
+      <h1>Edinburgh Entertainment</h1>
 
-<body>
-  <header>
-    <img src="../images/logo.png" alt="EE" loading="lazy" width="80" height="80">
-    <h1>Edinburgh Entertainment</h1>
-
-    <form class="search-bar" action="#" method="GET" role="search" aria-label="Search Events">
-      <input type="search" name="q" class="search-input" placeholder="Search Events" aria-label="Search events" />
-      <button class="search-btn" type="submit" aria-label="Search">
-        <!-- Magnifier icon (SVG) -->
-        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none" />
-          <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      </button>
-    </form>
-
-    <a href="cart.html" class="cart-btn" aria-label="Open cart">
-      <img class="cart-img" src="../images/cart.png" width="35" height="35" alt="" aria-hidden="true">
-      <span id="cart-badge" aria-live="polite" aria-atomic="true">0</span>
-    </a>
-  </header>
-
-  <div class="nav-section">
-    <button id="menu" aria-label="Toggle navigation menu"></button>
-    <nav class="header-nav">
-      <ul class="navigation">
-        <li><a href="../index.html" title="index" class="active">Home</a></li>
-        <li><a href="../product_listing/index.html" title="events">Events</a></li>
-        <li><a href="../cart/index.html" title="cart">Cart</a></li>
-        <li><a href="../checkout/index.html" title="checkout">Checkout</a></li>
-      </ul>
-    </nav>
-  </div>
-
-  <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
-  <main class="divider">
-    <!-- Mobile Filter Toggle -->
-    <button id="filter-toggle" class="filter-toggle" aria-label="Toggle filters">
-      <span>Filters</span>
-      <span id="filter-count" class="filter-count hidden"></span>
-    </button>
-
-    <!-- Filter Sidebar -->
-    <aside id="filter-sidebar" class="filter-sidebar" aria-label="Event filters">
-      <div class="filter-header">
-        <h2>Filters</h2>
-        <button id="filter-close" class="filter-close" aria-label="Close filters">×</button>
-      </div>
-
-      <form id="filter-form" class="filter-form">
-        <!-- Date Range Filter -->
-        <div class="filter-group">
-          <h3>Date Range</h3>
-          <div class="filter-inputs">
-            <label for="date-start">
-              From:
-              <input type="date" id="date-start" name="date-start" />
-            </label>
-            <label for="date-end">
-              To:
-              <input type="date" id="date-end" name="date-end" />
-            </label>
-          </div>
-        </div>
-
-        <!-- Price Range Filter -->
-        <div class="filter-group">
-          <h3>Price Range (£)</h3>
-          <div class="filter-inputs">
-            <label for="price-min">
-              Min:
-              <input type="number" id="price-min" name="price-min" min="0" step="1" placeholder="0" />
-            </label>
-            <label for="price-max">
-              Max:
-              <input type="number" id="price-max" name="price-max" min="0" step="1" placeholder="No limit" />
-            </label>
-          </div>
-        </div>
-
-        <!-- Filter Actions -->
-        <div class="filter-actions">
-          <button type="submit" id="apply-filters" class="btn btn-primary">Apply Filters</button>
-          <button type="button" id="clear-filters" class="btn btn-secondary">Clear All</button>
-        </div>
+      <form
+        class="search-bar"
+        action="#"
+        method="GET"
+        role="search"
+        aria-label="Search Events"
+      >
+        <input
+          type="search"
+          name="q"
+          class="search-input"
+          placeholder="Search Events"
+          aria-label="Search events"
+        />
+        <button class="search-btn" type="submit" aria-label="Search">
+          <!-- Magnifier icon (SVG) -->
+          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+            />
+            <line
+              x1="16.5"
+              y1="16.5"
+              x2="21"
+              y2="21"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
       </form>
 
-      <!-- Active Filters Display -->
-      <div id="active-filters" class="active-filters hidden">
-        <h3>Active Filters:</h3>
-        <div id="filter-chips" class="filter-chips"></div>
-      </div>
-    </aside>
+      <a href="cart.html" class="cart-btn" aria-label="Open cart">
+        <img
+          class="cart-img"
+          src="../images/cart.png"
+          width="35"
+          height="35"
+          alt=""
+          aria-hidden="true"
+        />
+        <span id="cart-badge" aria-live="polite" aria-atomic="true">0</span>
+      </a>
+    </header>
 
-    <section class="products">
-      <!-- Results Count -->
-      <div class="results-header">
-        <div class="results-count">
-          <span id="results-showing">Showing <strong id="filtered-count">0</strong></span>
-          <span id="results-total"> of <strong id="total-count">0</strong> events</span>
+    <div class="nav-section">
+      <button id="menu" aria-label="Toggle navigation menu"></button>
+      <nav class="header-nav">
+        <ul class="navigation">
+          <li><a href="../index.html" title="index" class="active">Home</a></li>
+          <li>
+            <a href="../product_listing/index.html" title="events">Events</a>
+          </li>
+          <li><a href="../cart/index.html" title="cart">Cart</a></li>
+          <li>
+            <a href="../checkout/index.html" title="checkout">Checkout</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <nav id="breadcrumbs" class="breadcrumb" aria-label="Breadcrumb"></nav>
+    <main class="divider">
+      <!-- Mobile Filter Toggle -->
+      <button
+        id="filter-toggle"
+        class="filter-toggle"
+        aria-label="Toggle filters"
+      >
+        <span>Filters</span>
+        <span id="filter-count" class="filter-count hidden"></span>
+      </button>
+
+      <!-- Filter Sidebar -->
+      <aside
+        id="filter-sidebar"
+        class="filter-sidebar"
+        aria-label="Event filters"
+      >
+        <div class="filter-header">
+          <h2>Filters</h2>
+          <button
+            id="filter-close"
+            class="filter-close"
+            aria-label="Close filters"
+          >
+            ×
+          </button>
         </div>
 
-        <!-- Sorting Options -->
-        <div class="sort-controls">
-          <label for="sort">Sort by:</label>
-          <select id="sort" name="sort">
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="name-asc">Name: A to Z</option>
-          </select>
+        <form id="filter-form" class="filter-form">
+          <!-- Date Range Filter -->
+          <div class="filter-group">
+            <h3>Date Range</h3>
+            <div class="filter-inputs">
+              <label for="date-start">
+                From:
+                <input type="date" id="date-start" name="date-start" />
+              </label>
+              <label for="date-end">
+                To:
+                <input type="date" id="date-end" name="date-end" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="filter-group">
+            <h3>Price Range (£)</h3>
+            <div class="filter-inputs">
+              <label for="price-min">
+                Min:
+                <input
+                  type="number"
+                  id="price-min"
+                  name="price-min"
+                  min="0"
+                  step="1"
+                  placeholder="0"
+                />
+              </label>
+              <label for="price-max">
+                Max:
+                <input
+                  type="number"
+                  id="price-max"
+                  name="price-max"
+                  min="0"
+                  step="1"
+                  placeholder="No limit"
+                />
+              </label>
+            </div>
+          </div>
+
+          <!-- Filter Actions -->
+          <div class="filter-actions">
+            <button type="submit" id="apply-filters" class="btn btn-primary">
+              Apply Filters
+            </button>
+            <button type="button" id="clear-filters" class="btn btn-secondary">
+              Clear All
+            </button>
+          </div>
+        </form>
+
+        <!-- Active Filters Display -->
+        <div id="active-filters" class="active-filters hidden">
+          <h3>Active Filters:</h3>
+          <div id="filter-chips" class="filter-chips"></div>
         </div>
-      </div>
+      </aside>
 
-      <ul class="product-list"></ul>
-    </section>
-  </main>
-  <footer>
-    <p>Contact Us: Phone:0123-456-7890</p>
-    <p>Email: info@edinburghentertaiment.com</p>
+      <section class="products">
+        <!-- Results Count -->
+        <div class="results-header">
+          <div class="results-count">
+            <span id="results-showing"
+              >Showing <strong id="filtered-count">0</strong></span
+            >
+            <span id="results-total">
+              of <strong id="total-count">0</strong> events</span
+            >
+          </div>
 
-    <nav class="footer-nav">
+          <!-- Sorting Options -->
+          <div class="sort-controls">
+            <label for="sort">Sort by:</label>
+            <select id="sort" name="sort">
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+          </div>
+        </div>
 
-    </nav>
+        <ul class="product-list"></ul>
+      </section>
+    </main>
+    <footer>
+      <p>Contact Us: Phone:0123-456-7890</p>
+      <p>Email: info@edinburghentertaiment.com</p>
 
-    <p>&copy; <span id="currentyear"></span> 🏴󠁧󠁢󠁳󠁣󠁴󠁿 WDD330 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Kim Kathleen Brown 🏴󠁧󠁢󠁳󠁣󠁴󠁿
-      Edinburgh,Scotland
-      🏴󠁧󠁢󠁳󠁣󠁴󠁿</p>
-    <p id="lastModified"></p>
-  </footer>
-</body>
+      <nav class="footer-nav"></nav>
 
+      <p>
+        &copy; <span id="currentyear"></span> 🏴󠁧󠁢󠁳󠁣󠁴󠁿 WDD330 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Kim Kathleen Brown 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+        Edinburgh,Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+      </p>
+      <p id="lastModified"></p>
+    </footer>
+  </body>
 </html>

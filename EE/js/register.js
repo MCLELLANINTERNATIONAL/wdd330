@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
       email: formData.get('email'),
       phone: formData.get('phone'),
       timestamp: new Date().toISOString(),
-      eventId: getParam('event') || null // Optional: event ID from URL if linked from banner
+      eventId: getParam('event') || null, // Optional: event ID from URL if linked from banner
     };
 
     // Get existing registrations or initialize empty array

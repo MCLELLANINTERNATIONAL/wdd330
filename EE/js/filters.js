@@ -7,7 +7,7 @@ export class FilterManager {
       dateStart: null,
       dateEnd: null,
       priceMin: null,
-      priceMax: null
+      priceMax: null,
     };
     this.allEvents = [];
     this.filteredEvents = [];
@@ -59,7 +59,10 @@ export class FilterManager {
     // Close sidebar when clicking outside on mobile
     document.addEventListener('click', (e) => {
       if (filterSidebar && filterSidebar.classList.contains('open')) {
-        if (!filterSidebar.contains(e.target) && !filterToggle.contains(e.target)) {
+        if (
+          !filterSidebar.contains(e.target) &&
+          !filterToggle.contains(e.target)
+        ) {
           filterSidebar.classList.remove('open');
         }
       }
@@ -160,7 +163,7 @@ export class FilterManager {
    * Filter events based on current filter state
    */
   filterEvents(events) {
-    return events.filter(event => {
+    return events.filter((event) => {
       // Date filtering
       if (this.filters.dateStart || this.filters.dateEnd) {
         const eventDate = this.getEventDate(event);
@@ -183,17 +186,27 @@ export class FilterManager {
         const eventPrice = this.getEventPrice(event);
 
         // If event has no price and we have a min price filter, exclude it
-        if (eventPrice === null && this.filters.priceMin !== null && this.filters.priceMin > 0) {
+        if (
+          eventPrice === null &&
+          this.filters.priceMin !== null &&
+          this.filters.priceMin > 0
+        ) {
           return false;
         }
 
         // If event has a price, apply price filters
         if (eventPrice !== null) {
-          if (this.filters.priceMin !== null && eventPrice < this.filters.priceMin) {
+          if (
+            this.filters.priceMin !== null &&
+            eventPrice < this.filters.priceMin
+          ) {
             return false;
           }
 
-          if (this.filters.priceMax !== null && eventPrice > this.filters.priceMax) {
+          if (
+            this.filters.priceMax !== null &&
+            eventPrice > this.filters.priceMax
+          ) {
             return false;
           }
         }
@@ -242,24 +255,38 @@ export class FilterManager {
 
     // Date chips
     if (this.filters.dateStart) {
-      chips.push(this.createChip('date-start', `From: ${this.formatDate(this.filters.dateStart)}`));
+      chips.push(
+        this.createChip(
+          'date-start',
+          `From: ${this.formatDate(this.filters.dateStart)}`,
+        ),
+      );
     }
     if (this.filters.dateEnd) {
-      chips.push(this.createChip('date-end', `To: ${this.formatDate(this.filters.dateEnd)}`));
+      chips.push(
+        this.createChip(
+          'date-end',
+          `To: ${this.formatDate(this.filters.dateEnd)}`,
+        ),
+      );
     }
 
     // Price chips
     if (this.filters.priceMin !== null) {
-      chips.push(this.createChip('price-min', `Min: £${this.filters.priceMin}`));
+      chips.push(
+        this.createChip('price-min', `Min: £${this.filters.priceMin}`),
+      );
     }
     if (this.filters.priceMax !== null) {
-      chips.push(this.createChip('price-max', `Max: £${this.filters.priceMax}`));
+      chips.push(
+        this.createChip('price-max', `Max: £${this.filters.priceMax}`),
+      );
     }
 
     // Show/hide active filters section
     if (chips.length > 0) {
       activeFiltersSection.classList.remove('hidden');
-      chips.forEach(chip => chipsContainer.appendChild(chip));
+      chips.forEach((chip) => chipsContainer.appendChild(chip));
     } else {
       activeFiltersSection.classList.add('hidden');
     }
@@ -288,7 +315,7 @@ export class FilterManager {
    * Remove a specific filter
    */
   removeFilter(filterId) {
-    switch(filterId) {
+    switch (filterId) {
       case 'date-start':
         document.getElementById('date-start').value = '';
         this.filters.dateStart = null;
@@ -354,7 +381,7 @@ export class FilterManager {
     return date.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     });
   }
 

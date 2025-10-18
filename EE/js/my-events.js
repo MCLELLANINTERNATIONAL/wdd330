@@ -53,14 +53,14 @@ function renderBookmarks() {
 function attachRemoveHandlers() {
   const removeButtons = document.querySelectorAll('.remove-bookmark-btn');
 
-  removeButtons.forEach(button => {
+  removeButtons.forEach((button) => {
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const eventId = button.dataset.id;
 
       // Remove from bookmarks
       let bookmarks = getBookmarks();
-      bookmarks = bookmarks.filter(event => event.id !== eventId);
+      bookmarks = bookmarks.filter((event) => event.id !== eventId);
 
       // Save and re-render
       localStorage.setItem('ee-bookmarks', JSON.stringify(bookmarks));
@@ -70,12 +70,14 @@ function attachRemoveHandlers() {
 }
 
 // Clear all bookmarks handler
-document.getElementById('clear-bookmarks-btn')?.addEventListener('click', () => {
-  if (confirm('Are you sure you want to remove all bookmarked events?')) {
-    clearAllBookmarks();
-    renderBookmarks();
-  }
-});
+document
+  .getElementById('clear-bookmarks-btn')
+  ?.addEventListener('click', () => {
+    if (confirm('Are you sure you want to remove all bookmarked events?')) {
+      clearAllBookmarks();
+      renderBookmarks();
+    }
+  });
 
 // Initial render
 renderBookmarks();

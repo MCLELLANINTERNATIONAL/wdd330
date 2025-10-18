@@ -19,7 +19,7 @@ function formatEventDate(dateString) {
     month: 'short',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 }
 
@@ -57,8 +57,11 @@ function selectFeaturedEvent(events) {
   if (!events || events.length === 0) return null;
 
   // Try to find event with highest price
-  const eventsWithPrice = events.filter(event =>
-    event.priceRanges && event.priceRanges.length > 0 && event.priceRanges[0].max
+  const eventsWithPrice = events.filter(
+    (event) =>
+      event.priceRanges &&
+      event.priceRanges.length > 0 &&
+      event.priceRanges[0].max,
   );
 
   if (eventsWithPrice.length > 0) {
@@ -133,7 +136,10 @@ async function bookFeaturedEvent(event) {
  */
 async function showBanner() {
   // Only run on homepage
-  if (window.location.pathname !== '/' && !window.location.pathname.includes('index.html')) {
+  if (
+    window.location.pathname !== '/' &&
+    !window.location.pathname.includes('index.html')
+  ) {
     return;
   }
 
@@ -203,7 +209,6 @@ async function showBanner() {
         bookFeaturedEvent(featured);
       };
     }
-
   } catch (error) {
     console.error('Error showing banner:', error);
   }

@@ -145,7 +145,7 @@ input[type='number']::-webkit-inner-spin-button {
 
 .submit-button {
   cursor: pointer;
-  background: #D97706;;
+  background: #d97706;
   color: #fff;
   border: none;
   padding: 0.9rem 1.25rem;

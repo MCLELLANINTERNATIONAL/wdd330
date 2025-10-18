@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   root: './',
   publicDir: 'public',
-  appType: 'mpa', 
+  appType: 'mpa',
   server: {
     proxy: {
       '/api/ticketmaster': {
